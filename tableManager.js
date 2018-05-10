@@ -13,16 +13,14 @@ var TableMaker = require('./tableMaker.js');
 class TableManager {
     
     constructor(rootName, tables) {
-        
         this.rootName = rootName;
         this.tables = tables;
-        this.db = {};
-        this.init();
-        
+        this.db = {}; 
+        return this; 
     }
     
-    init() {
-        
+    // function to init the table manager
+    init() {  
         // root instance will contain all the table references
         this.db[this.rootName] = new Datastore({filename: 'db/' + this.rootName + '.db', autoload: true});
         
@@ -32,13 +30,8 @@ class TableManager {
         });
         
         for (var t = 0; t < this.tables.length; t++) { 
-    
             new TableMaker(this.tables[t], this.db, this.rootName);
-
         }
-        
-        return this;
-        
     }
     
 }

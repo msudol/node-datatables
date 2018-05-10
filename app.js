@@ -14,5 +14,6 @@ var tables = [
 
 // initialize an instance of TableManager, with the root table table and the tables it's going to manage.
 var db = new TableManager('root', tables);
+db.init();
 
 console.log("Root table name is: " + db.rootName);
