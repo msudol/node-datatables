@@ -4,7 +4,7 @@
   "description": "A project framework to build, edit, and view datatables",
   "main": "app.js",
   "dependencies": {
-    "nedb": "^1.8.0",
+    "nedb": "^1.8.0"
   },
   "devDependencies": {},
   "scripts": {
