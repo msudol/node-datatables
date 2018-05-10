@@ -1,0 +1,14 @@
+{
+  "name": "node-datatables",
+  "version": "0.0.1",
+  "description": "A project framework to build, edit, and view datatables",
+  "main": "app.js",
+  "dependencies": {
+    "nedb": "^1.8.0",
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matt Sudol"
+}
