@@ -1,37 +1,108 @@
 /* tableManager.js 
 * 
 * Class will manage tables / documents
+* 
+* Initially this is built for nedb but should eventually support mongo too
 */
 "use strict";
 
 // require nedb or mongo
 var Datastore = require('nedb');
-
-// require tableMaker class
-var TableMaker = require('./tableMaker.js');
+var fs = require('fs');
 
 class TableManager {
     
-    constructor(rootName, tables) {
+    constructor(rootName, tables, path, type) {
         this.rootName = rootName;
         this.tables = tables;
+        this.path = path || 'db';
+        // type will default to nedb if mongodb is not defined
+        this.type = type || 'nedb';
         this.db = {}; 
         return this; 
     }
     
     // function to init the table manager
-    init() {  
-        // root instance will contain all the table references
-        this.db[this.rootName] = new Datastore({filename: 'db/' + this.rootName + '.db', autoload: true});
+    init(callback) {
+        var self = this;
+        var callback = callback;
         
+        // root instance will contain all the table references
+        this.db[this.rootName] = new Datastore({filename: this.path + '/' + this.rootName + '.db', autoload: true});
         // Using a unique constraint with the index for root table names (filename)
         this.db[this.rootName].ensureIndex({ fieldName: 'name', unique: true }, function (err) {
             //console.error(err);
         });
         
+        var i = 0;
         for (var t = 0; t < this.tables.length; t++) { 
-            new TableMaker(this.tables[t], this.db, this.rootName);
-        }
+            // call subtable create function
+            this.subTable(this.tables[t].name, this.tables[t], function(done) {
+                //console.log(i);
+                i++;
+                // the last subtable has finished initializing
+                if (i >= self.tables.length) {
+                    return callback();        
+                }
+            });   
+        } 
+    }
+    
+    // creates a subtable within this table manager
+    subTable(tableName, tableObj, callback) {  
+        var self = this;
+        var tableName = tableName;
+        var tableObj = tableObj;
+        
+        // inspect the root table
+        this.db[this.rootName].find({name: tableName}, function(err, docs) {
+            
+            self.db[tableName] = new Datastore({filename: 'db/' + tableName + '.db', autoload: true});
+            
+            // no doc reference in the root database was found - need to create the table for tracking
+            if (docs.length == 0) {
+                self.db[self.rootName].insert(tableObj, function (err, newDoc) {   
+                    // init the datastore for this table.name if exists OR create it
+                    console.log("Creating sub table: " + tableName);
+                });     
+            }
+            else {
+                console.log("Initializing sub table: " + tableName);
+            }
+            
+            return callback();
+        });    
+    }
+    
+    // extend the nedb/mongo find function for tableMan class
+    find(tableName, findStr, callback) {
+        this.db[tableName].find(findStr, function(err, docs) {
+            return callback(err, docs);
+        }); 
+    }
+    
+    // extend nedb to drop a database (may not need for mongo) 
+    drop(tableName, callback) {
+        var self = this;
+        var tableName = tableName;
+        var callback = callback;
+        
+        this.db[tableName].remove({ }, { multi: true }, function (err, numRemoved) {
+            
+            self.db[tableName].loadDatabase(function (err) {
+                // now remove the file
+                fs.unlink(self.path + "/" + tableName + ".db", function(err) {
+                    if (err) throw err;
+                });
+                
+                // remove root table reference
+                self.db[self.rootName].remove({name: tableName}, {}, function(err, numRemoved) {
+                    // done?
+                    return callback(err, numRemoved, tableName);
+                });
+                
+            });
+        });
     }
     
 }
