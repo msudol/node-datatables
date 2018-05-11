@@ -13,11 +13,11 @@ var tables = [
 ];
 
 /* DOING SOME THINGS TO EXERCISE TABLEMANAGER */
-
 // initialize an instance of TableManager, with the root table table and the tables it's going to manage.
 // syntax (root table name, list of tables to manage, relative path for installation (defaults to 'db'), optional type of nedb or mongo)
 var db = new TableManager('root', tables, 'db');
 
+// function will be sent to the table init function as a callback.
 var onTableInit = function(db) {
     
     // present some data about the root table.
@@ -49,6 +49,7 @@ var onTableInit = function(db) {
     
 }
 
+// intitialize the DB and send a callback function that -should- run when the db is all setup.
 db.init(function() {
     onTableInit(db);
 });
