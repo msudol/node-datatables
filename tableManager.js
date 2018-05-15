@@ -53,6 +53,7 @@ class TableManager {
         var self = this;
         var tableName = tableName;
         var tableObj = tableObj;
+        var callback = callback;
         
         // inspect the root table
         this.db[this.rootName].find({name: tableName}, function(err, docs) {
@@ -64,13 +65,14 @@ class TableManager {
                 self.db[self.rootName].insert(tableObj, function (err, newDoc) {   
                     // init the datastore for this table.name if exists OR create it
                     console.log("Creating sub table: " + tableName);
+                    return callback();
                 });     
             }
             else {
                 console.log("Initializing sub table: " + tableName);
+                return callback();
             }
             
-            return callback();
         });    
     }
     

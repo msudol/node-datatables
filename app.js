@@ -5,6 +5,10 @@
 var TableManager = require('./tableManager.js');
 var TestManager = require('./testManager.js');
 
+// get command line args
+var processArgs = process.argv;
+
+
 // Tables array should eventually come from a client tool or a config file.
 // These tables represent the tables that are managed overall.
 var tables = [
@@ -20,8 +24,14 @@ var db = new TableManager('root', tables, 'db');
 
 // function will be sent to the table init function as a callback.
 var onTableInit = function(db) {
-    var initTest = new TestManager(db);
-    initTest.init();
+    
+    if (processArgs.includes("notest")) {
+        console.log("Skipping Tests");
+    }
+    else {    
+        var initTest = new TestManager(db);
+        initTest.init();
+    }
 };
 
 // intitialize the DB and send a callback function that -should- run when the db is all setup.
