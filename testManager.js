@@ -41,7 +41,13 @@ class TestManager {
                     console.log(" - " + docs[i].name);
                 }
             });
-        });        
+        });   
+        
+        // not running in sync to previous test..  need to have a done.next system in place.
+        // test writing to a sub table
+        db.write("test3", {g:"hello", h:"world", i:"!"}, function(err, newDoc) {
+            console.log("Wrote data: " + newDoc);
+        });
     }
     
 }

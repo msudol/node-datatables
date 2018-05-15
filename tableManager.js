@@ -107,6 +107,17 @@ class TableManager {
         });
     }
     
+    // need to write to a table, data, with a return function
+    write(tableName, data, callback) {
+        var callback = callback;
+        this.db[tableName].insert(data, function(err, newDoc) {
+           
+            //TODO: query the root table and reject fields that are not allowed
+            
+            return callback(err, newDoc);
+        });
+    }
+    
 }
 
 module.exports = TableManager;
