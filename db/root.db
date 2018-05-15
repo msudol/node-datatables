@@ -1,5 +1,5 @@
 {"name":"test2","fields":["d","e","f"],"_id":"DMBmpCzhVPoKtXtp"}
 {"name":"test3","fields":["g","h","i"],"_id":"FsqqN70l6CiVqeXG"}
 {"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
-{"name":"test1","fields":["a","b","c"],"_id":"L6Ig0C36xRQOxSxW"}
-{"$$deleted":true,"_id":"L6Ig0C36xRQOxSxW"}
+{"name":"test1","fields":["a","b","c"],"_id":"L8RDtPNRIZSb49UD"}
+{"$$deleted":true,"_id":"L8RDtPNRIZSb49UD"}

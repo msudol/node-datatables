@@ -1,8 +1,9 @@
 /* app.js */
 "use strict";
 
-// import TableManer class 
+// import TableManager class 
 var TableManager = require('./tableManager.js');
+var TestManager = require('./testManager.js');
 
 // Tables array should eventually come from a client tool or a config file.
 // These tables represent the tables that are managed overall.
@@ -19,35 +20,9 @@ var db = new TableManager('root', tables, 'db');
 
 // function will be sent to the table init function as a callback.
 var onTableInit = function(db) {
-    
-    // present some data about the root table.
-    console.log("Root table name is: " + db.rootName);
-
-    // get the root table docs
-    db.find(db.rootName, {}, function (err, docs) {
-        console.log("Current tables managed: ");
-
-        // fails if tables need to be created because of aSync but works if they already exist
-        for (var i = 0; i < docs.length; i++) {
-            console.log(" - " + docs[i].name);
-        }
-    });
-    
-    db.drop("test1", function(err, numRemoved, tableName) {
-        console.log("Dropping " + tableName);
-
-        // get the root table docs
-        db.find(db.rootName, {}, function (err, docs) {
-            console.log("Current tables managed: ");
-
-            // fails if tables need to be created because of aSync but works if they already exist
-            for (var i = 0; i < docs.length; i++) {
-                console.log(" - " + docs[i].name);
-            }
-        });
-    });
-    
-}
+    var initTest = new TestManager(db);
+    initTest.init();
+};
 
 // intitialize the DB and send a callback function that -should- run when the db is all setup.
 db.init(function() {
