@@ -1,0 +1,17 @@
+{
+	"tables": 
+    [
+        {
+			"name": "test",
+			"fields": ["a", "b", "c"]
+		},
+		{
+			"name": "test2",
+			"fields": ["d", "e", "f"]
+		},
+		{
+			"name": "test3",
+			"fields": ["g", "h", "i"]
+		}
+	]
+}
