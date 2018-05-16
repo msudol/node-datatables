@@ -125,16 +125,25 @@ class TableManager {
     
     // need to write to a table, data, with a return function
     write(tableName, data, callback) {
+        var data = data;
         var callback = callback;
         this.db[tableName].insert(data, function(err, newDoc) {
-           
+
             if (err) {
                 console.error(err);
             } 
-            
             //TODO: query the root table and reject fields that are not allowed
             return callback(err, newDoc);
         });
+    }
+
+    // assumes tablename is going to be unique from setting indexing and returns the fields key.
+    allowedFields(tableName, callback) {
+        var tableName = tableName;
+        console.log("Checking allowed fields for: " + tableName);
+        this.db[this.rootName].find({name: tableName}, function(err, docs) {   
+            return callback(err, docs[0].fields);
+        });  
     }
     
 }

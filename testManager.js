@@ -25,7 +25,9 @@ class TestManager {
                         self.testWriteTable(function() { 
                             self.testNewSubTable(function() {
                                 self.testRootTableDocs(function () {
-                                     console.log("done");  
+                                    self.testTableAllowedFields(function () { 
+                                        console.log("done"); 
+                                    })         
                                 })
                             })
                         })
@@ -87,6 +89,14 @@ class TestManager {
             console.log("Created new subtable");
             return callback();
         })
+    }
+    
+    testTableAllowedFields(callback) {
+        var db = this.db;
+        db.allowedFields("test2", function(err, fields) {
+            console.log(" - " + fields);
+            return callback();
+        });
     }
     
 }
