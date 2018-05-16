@@ -22,7 +22,17 @@ class TestManager {
             self.testRootTableDocs(function() { 
                 self.testDropTable(function() {
                     self.testRootTableDocs(function() {
-                        self.testWriteTable(function() { console.log("done")})})})})});
+                        self.testWriteTable(function() { 
+                            self.testNewSubTable(function() {
+                                self.testRootTableDocs(function () {
+                                     console.log("done");  
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        });
 
     }
         
@@ -67,6 +77,16 @@ class TestManager {
             console.log("Wrote data: " + JSON.stringify(newDoc));
             return callback();
         });    
+    }
+    
+    testNewSubTable(callback) {
+        var db = this.db;
+        var testTable = {name: 'test4', fields: ['key', 'val', 'derp']};
+        // test creating a new subtable
+        db.subTable(testTable.name, testTable, function() {
+            console.log("Created new subtable");
+            return callback();
+        })
     }
     
 }

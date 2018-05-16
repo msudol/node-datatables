@@ -31,7 +31,9 @@ class TableManager {
         this.db[this.rootName] = new Datastore({filename: this.path + '/' + this.rootName + '.db', autoload: true});
         // Using a unique constraint with the index for root table names (filename)
         this.db[this.rootName].ensureIndex({ fieldName: 'name', unique: true }, function (err) {
-            //console.error(err);
+            if (err) {
+                console.error(err);
+            }
         });
         
         var i = 0;
@@ -57,13 +59,18 @@ class TableManager {
         
         // inspect the root table
         this.db[this.rootName].find({name: tableName}, function(err, docs) {
-            
+            if (err) {
+                console.error(err);
+            }
             self.db[tableName] = new Datastore({filename: 'db/' + tableName + '.db', autoload: true});
             
             // no doc reference in the root database was found - need to create the table for tracking
             if (docs.length == 0) {
                 self.db[self.rootName].insert(tableObj, function (err, newDoc) {   
                     // init the datastore for this table.name if exists OR create it
+                    if (err) {
+                        console.error(err);
+                    }
                     console.log("Creating sub table: " + tableName);
                     return callback();
                 });     
@@ -79,6 +86,9 @@ class TableManager {
     // extend the nedb/mongo find function for tableMan class
     find(tableName, findStr, callback) {
         this.db[tableName].find(findStr, function(err, docs) {
+            if (err) {
+                console.error(err);
+            }            
             return callback(err, docs);
         }); 
     }
@@ -90,8 +100,14 @@ class TableManager {
         var callback = callback;
         
         this.db[tableName].remove({ }, { multi: true }, function (err, numRemoved) {
-            
+            if (err) {
+                console.error(err);
+            }             
             self.db[tableName].loadDatabase(function (err) {
+                if (err) {
+                    console.error(err);
+                }   
+                
                 // now remove the file
                 fs.unlink(self.path + "/" + tableName + ".db", function(err) {
                     if (err) throw err;
@@ -112,8 +128,11 @@ class TableManager {
         var callback = callback;
         this.db[tableName].insert(data, function(err, newDoc) {
            
-            //TODO: query the root table and reject fields that are not allowed
+            if (err) {
+                console.error(err);
+            } 
             
+            //TODO: query the root table and reject fields that are not allowed
             return callback(err, newDoc);
         });
     }

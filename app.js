@@ -8,7 +8,6 @@ var TestManager = require('./testManager.js');
 // get command line args
 var processArgs = process.argv;
 
-
 // Tables array should eventually come from a client tool or a config file.
 // These tables represent the tables that are managed overall.
 var rootTables = [
