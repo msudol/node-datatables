@@ -4,13 +4,13 @@
 // import TableManager class 
 var TableManager = require('./tableManager.js');
 var TestManager = require('./testManager.js');
-var Tables = require('./tables.js');
 
 // get command line args
 var processArgs = process.argv;
 
 // Tables array should eventually come from a client tool or a config file.
 // These tables represent the tables that are managed overall.
+var Tables = require('./tables.js');
 var rootTables = Tables;
 
 /* DOING SOME THINGS TO EXERCISE TABLEMANAGER */

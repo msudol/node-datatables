@@ -9,93 +9,102 @@ class TestManager {
 
     constructor(db) {
         this.db = db;
-        this.testList = [this.testRootTableName, this.testRootTableDocs, this.testDropTable, this.testRootTableDocs, this.testWriteTable];
+        this.isRunning = false;
         return this;
     }
 
     init() {   
         console.log("Running Tests");
         var self = this;
-        
-        // would be nice to do some sort of test running from the above array instead
-        self.testRootTableName(function() {
-            self.testRootTableDocs(function() { 
-                self.testDropTable(function() {
-                    self.testRootTableDocs(function() {
-                        self.testWriteTable(function() { 
-                            self.testNewSubTable(function() {
-                                self.testRootTableDocs(function () {
-                                    self.testTableAllowedFields(function () { 
-                                        console.log("done"); 
-                                    })         
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-        });
-
+        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testTableAllowedFields];
+        self.runner(self.testList, 0);
     }
         
     // This will run tests in order
-    runner() { 
-
+    runner(testList, curTest) { 
+        var self = this;
+        self.isRunning = true; 
+        self.testList[curTest](self);
+        self.runnerCheck(testList, curTest, self);  
+    }
+    
+    // recursive function to check if a test is running
+    runnerCheck(testList, curTest, self) {    
+        var isRunning = self.isRunning;
+        
+        if (isRunning) {
+            setTimeout(function() {
+                self.runnerCheck(testList, curTest, self);
+            }, 100)
+        }
+        else {
+            if ((curTest + 1) == testList.length) {
+                console.log("Done tests!");
+            }
+            else {
+                self.runner(testList, curTest + 1);
+            }
+        }
     }
     
     // break these out into modules in the tests folder eventually
-    testRootTableName(callback) {
-        var db = this.db;
+    testRootTableName(self) {
         // present some data about the root table.
-        console.log("Root table name is: " + db.rootName);
-        return callback();
+        console.log("Root table name is: " + self.db.rootName);
+        self.isRunning = false;
+        return;
     }
     
-    testRootTableDocs(callback) { 
-        var db = this.db;
+    testRootTableDocs(self) { 
+
         // get the root table docs
-        db.find(db.rootName, {}, function (err, docs) {
+        self.db.find(self.db.rootName, {}, function (err, docs) {
             console.log("Current tables managed: ");
             // fails if tables need to be created because of aSync but works if they already exist
             for (var i = 0; i < docs.length; i++) {
                 console.log(" - " + docs[i].name);
             }
-            return callback();
+            self.isRunning = false;
+            return;
         }); 
     }
     
-    testDropTable(callback) {
-        var db = this.db;
-        db.drop("test1", function(err, numRemoved, tableName) {
+    testDropTable(self) {
+
+        self.db.drop("test1", function(err, numRemoved, tableName) {
             console.log("Dropping " + tableName);
-            return callback();
+            self.isRunning = false;
+            return;
         });  
     }
     
-    testWriteTable(callback) {
-        var db = this.db;
+    testWriteTable(self) {
+
         // test writing to a sub table
-        db.write("test3", {g:"hello ", h:"world", i:"!"}, function(err, newDoc) {
+        self.db.write("test3", {g:"hello ", h:"world", i:"!"}, function(err, newDoc) {
             console.log("Wrote data: " + JSON.stringify(newDoc));
-            return callback();
+            self.isRunning = false;
+            return;
         });    
     }
     
-    testNewSubTable(callback) {
-        var db = this.db;
+    testNewSubTable(self) {
+
         var testTable = {name: 'test4', fields: ['key', 'val', 'derp']};
         // test creating a new subtable
-        db.subTable(testTable.name, testTable, function() {
+        self.db.subTable(testTable.name, testTable, function() {
             console.log("Created new subtable");
-            return callback();
+            self.isRunning = false;
+            return;
         })
     }
     
-    testTableAllowedFields(callback) {
-        var db = this.db;
-        db.allowedFields("test2", function(err, fields) {
+    testTableAllowedFields(self) {
+
+        self.db.allowedFields("test2", function(err, fields) {
             console.log(" - " + fields);
-            return callback();
+            self.isRunning = false;
+            return;
         });
     }
     
