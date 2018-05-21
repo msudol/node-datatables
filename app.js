@@ -21,11 +21,12 @@ var db = new TableManager('root', rootTables, 'db');
 // function will be sent to the table init function as a callback.
 var onTableInit = function (db) {
     
-    if (processArgs.includes("notest")) {
-        console.log("Skipping Tests");
-    } else {
+    if (processArgs.includes("runtests")) {
+        console.log("Running Tests");
         var initTest = new TestManager(db);
         initTest.init();
+    } else {
+
     }
 };
 

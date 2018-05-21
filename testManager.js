@@ -16,7 +16,7 @@ class TestManager {
     init() {   
         console.log("Running Tests");
         var self = this;
-        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testTableAllowedFields];
+        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testTableAllowedFields, self.getAllFromTable];
         self.runner(self.testList, 0);
     }
         
@@ -71,7 +71,7 @@ class TestManager {
     
     testDropTable(self) {
 
-        self.db.drop("test1", function(err, numRemoved, tableName) {
+        self.db.drop("test1", function (err, numRemoved, tableName) {
             console.log("Dropping " + tableName);
             self.isRunning = false;
             return;
@@ -81,7 +81,7 @@ class TestManager {
     testWriteTable(self) {
 
         // test writing to a sub table
-        self.db.write("test3", {g:"hello ", h:"world", i:"!"}, function(err, newDoc) {
+        self.db.write("test3", {g:"hello ", h:"world", i:"!"}, function (err, newDoc) {
             console.log("Wrote data: " + JSON.stringify(newDoc));
             self.isRunning = false;
             return;
@@ -92,7 +92,7 @@ class TestManager {
 
         var testTable = {name: 'test4', fields: ['key', 'val', 'derp']};
         // test creating a new subtable
-        self.db.subTable(testTable.name, testTable, function() {
+        self.db.subTable(testTable.name, testTable, function () {
             console.log("Created new subtable");
             self.isRunning = false;
             return;
@@ -101,11 +101,24 @@ class TestManager {
     
     testTableAllowedFields(self) {
 
-        self.db.allowedFields("test2", function(err, fields) {
+        self.db.allowedFields("test2", function (err, fields) {
             console.log(" - " + fields);
             self.isRunning = false;
             return;
         });
+    }
+    
+    testGetAllFromTable(self) {
+        
+        self.db.find("test3", {}, function (err, docs) {
+            console.log("Current tables in : " + );
+            // fails if tables need to be created because of aSync but works if they already exist
+            for (var i = 0; i < docs.length; i++) {
+                console.log(" - " + docs[i].name);
+            }
+            self.isRunning = false;
+            return;            
+        })
     }
     
 }
