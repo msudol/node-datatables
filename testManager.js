@@ -16,7 +16,7 @@ class TestManager {
     init() {   
         console.log("Running Tests");
         var self = this;
-        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testTableAllowedFields, self.getAllFromTable];
+        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testTableAllowedFields, self.testGetAllFromTable];
         self.runner(self.testList, 0);
     }
         
@@ -24,6 +24,7 @@ class TestManager {
     runner(testList, curTest) { 
         var self = this;
         self.isRunning = true; 
+        console.log("=== TEST RUNNER === TEST: " + curTest);
         self.testList[curTest](self);
         self.runnerCheck(testList, curTest, self);  
     }
@@ -39,7 +40,7 @@ class TestManager {
         }
         else {
             if ((curTest + 1) == testList.length) {
-                console.log("Done tests!");
+                console.log("=== Done tests! ===");
             }
             else {
                 self.runner(testList, curTest + 1);
@@ -50,7 +51,7 @@ class TestManager {
     // break these out into modules in the tests folder eventually
     testRootTableName(self) {
         // present some data about the root table.
-        console.log("Root table name is: " + self.db.rootName);
+        console.log(" - Root table name is: " + self.db.rootName);
         self.isRunning = false;
         return;
     }
@@ -59,7 +60,7 @@ class TestManager {
 
         // get the root table docs
         self.db.find(self.db.rootName, {}, function (err, docs) {
-            console.log("Current tables managed: ");
+            console.log(" - Current tables managed: ");
             // fails if tables need to be created because of aSync but works if they already exist
             for (var i = 0; i < docs.length; i++) {
                 console.log(" - " + docs[i].name);
@@ -72,7 +73,7 @@ class TestManager {
     testDropTable(self) {
 
         self.db.drop("test1", function (err, numRemoved, tableName) {
-            console.log("Dropping " + tableName);
+            console.log(" - Dropping " + tableName);
             self.isRunning = false;
             return;
         });  
@@ -82,7 +83,7 @@ class TestManager {
 
         // test writing to a sub table
         self.db.write("test3", {g:"hello ", h:"world", i:"!"}, function (err, newDoc) {
-            console.log("Wrote data: " + JSON.stringify(newDoc));
+            console.log("- Wrote data: " + JSON.stringify(newDoc));
             self.isRunning = false;
             return;
         });    
@@ -93,7 +94,7 @@ class TestManager {
         var testTable = {name: 'test4', fields: ['key', 'val', 'derp']};
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
-            console.log("Created new subtable");
+            console.log(" - Created new subtable");
             self.isRunning = false;
             return;
         })
@@ -110,11 +111,13 @@ class TestManager {
     
     testGetAllFromTable(self) {
         
-        self.db.find("test3", {}, function (err, docs) {
-            console.log("Current tables in : " + );
+        var tableName = "test3";
+        
+        self.db.find(tableName, {}, function (err, docs) {
+            console.log(" - Current tables in : " + tableName);
             // fails if tables need to be created because of aSync but works if they already exist
             for (var i = 0; i < docs.length; i++) {
-                console.log(" - " + docs[i].name);
+                console.log(" - " + JSON.stringify(docs[i]));
             }
             self.isRunning = false;
             return;            
