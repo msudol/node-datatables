@@ -19,13 +19,15 @@ class TableManager {
         // type will default to nedb if mongodb is not defined
         this.type = type || 'nedb';
         this.db = {}; 
+        this.logging = false;
         return this; 
     }
     
     // function to init the table manager
-    init(callback) {
+    init(callback, logging) {
         var self = this;
         var callback = callback;
+        this.logging = logging || false;
         
         // root instance will contain all the table references
         this.db[this.rootName] = new Datastore({filename: this.path + '/' + this.rootName + '.db', autoload: true});
@@ -85,10 +87,16 @@ class TableManager {
     
     // extend the nedb/mongo find function for tableMan class
     find(tableName, findStr, callback) {
-        this.db[tableName].find(findStr, function(err, docs) {
+        
+        var self = this;
+        
+        self.db[tableName].find(findStr, function(err, docs) {
             if (err) {
                 console.error(err);
-            }            
+            }   
+            
+            if (self.logging) console.log("Searching " + tableName + " for " + findStr + ": Found " + docs.length + " docs.");
+            
             return callback(err, docs);
         }); 
     }

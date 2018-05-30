@@ -9,25 +9,23 @@
 var express = require('express');
 var app = express();
 var router = express.Router();
-
-// import WebServer Class
-var WebServerAPI = require('./webServerAPI.js');
-
+var Api = require('./routes/api');
 // yes it's a class for the webserver, why? I don't know yet but we'll see.
 class WebServer {
     
-    constructor() {
+    constructor(db) {
         
+        this.db = db;
         this.app = app;
         this.router = router; 
         
-        this.api = require('./routes/api');
+        this.api = new Api(this.db);
         
         // serve static files from the public folder at /
         this.app.use(express.static('public'));
    
         // the api route handler
-        this.app.use('/api', this.api); 
+        this.app.use('/api', this.api.handler); 
         
         // get /test custom route
         this.app.get('/test', (req, res) => res.send('Hello World!'));

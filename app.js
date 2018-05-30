@@ -37,8 +37,8 @@ var onTableInit = function (db) {
 // intitialize the DB and send a callback function that -should- run when the db is all setup.
 db.init(function () {
     onTableInit(db);
-});
+}, true);
 
-// setup instance of an express web server.
-var ws = new WebServer();
+// setup instance of an express web server for this DB.
+var ws = new WebServer(db);
 

@@ -1,20 +1,58 @@
-var express = require('express')
-var router = express.Router()
+/* api.js 
+* 
+* Class will the api
+* 
+*/
+"use strict";
 
-// middleware that is specific to this router
-router.use(function timeLog (req, res, next) {
-  console.log('Time: ', Date.now())
-  next()
-});
+var express = require('express');
+var router = express.Router();
 
-// define the home page route
-router.get('/', function (req, res) {
-  res.send('API home page')
-});
+class Api {
+    
+    constructor(db) {
+        this.handler = router;        
+        this.db = db;
+        var self = this;
+        
+        // middleware that is specific to this router
+        this.handler.use(function timeLog (req, res, next) {
+            console.log('Time: ', Date.now())
+            next();
+        });
 
-// define the about route
-router.get('/about', function (req, res) {
-  res.send('About API')
-});
+        // define the home page route
+        this.handler.get('/', function (req, res) {
+            res.send('API home page');
+        });
 
-module.exports = router;
+        // define the about route
+        this.handler.get('/about', function (req, res) {
+            res.send('About API');
+        });
+
+        this.handler.get('/find/:dbName/opts/:opts', function (req, res) {
+            console.log(req.params);
+            var dbName = req.params.dbName;
+            var findStr = JSON.parse(req.params.opts);
+            
+            self.db.find(dbName, findStr, function(err, docs) {
+                if (err) {
+                    res.send('An error occurred!');
+                } else {
+                    var retDocs = "";
+                    for (var i = 0; i < docs.length; i++) {
+                        retDocs += " - " + JSON.stringify(docs[i]) + "<br>";
+                    }
+                    res.send(retDocs);
+                }
+            });
+            
+        });
+        
+    }
+    
+ 
+}
+
+module.exports = Api;
