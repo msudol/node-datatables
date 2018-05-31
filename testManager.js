@@ -16,7 +16,7 @@ class TestManager {
     init() {   
         console.log("Running Tests");
         var self = this;
-        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testTableAllowedFields, self.testGetAllFromTable];
+        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable];
         self.runner(self.testList, 0);
     }
         
@@ -57,7 +57,6 @@ class TestManager {
     }
     
     testRootTableDocs(self) { 
-
         // get the root table docs
         self.db.find(self.db.rootName, {}, function (err, docs) {
             console.log(" - Current tables managed: ");
@@ -71,7 +70,6 @@ class TestManager {
     }
     
     testDropTable(self) {
-
         self.db.drop("test1", function (err, numRemoved, tableName) {
             console.log(" - Dropping " + tableName);
             self.isRunning = false;
@@ -80,7 +78,6 @@ class TestManager {
     }
     
     testWriteTable(self) {
-
         // test writing to a sub table
         self.db.write("test3", {g:"hello ", h:"world", i:"!"}, function (err, newDoc) {
             console.log("- Wrote data: " + JSON.stringify(newDoc));
@@ -90,8 +87,7 @@ class TestManager {
     }
     
     testNewSubTable(self) {
-
-        var testTable = {name: 'test4', fields: ['key', 'val', 'derp']};
+        var testTable = {name: 'test4', fields: ['key', 'val', 'derp'], unique: ['key']};
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
             console.log(" - Created new subtable");
@@ -100,8 +96,21 @@ class TestManager {
         })
     }
     
+    testNewSubTableWrite(self) {
+        // test writing to a sub table
+        self.db.write("test4", {key:"unique", h:"testing", i:"once"}, function (err, newDoc) {
+            console.log("- Wrote data: " + JSON.stringify(newDoc));
+            
+            // try writing another to the unique key - key in this table
+             self.db.write("test4", {key:"unique", h:"testing", i:"twice"}, function (err, newDoc) {
+                console.log("- Wrote data: " + JSON.stringify(newDoc));
+                self.isRunning = false;
+                return;
+            }); 
+        });    
+    }
+    
     testTableAllowedFields(self) {
-
         self.db.allowedFields("test2", function (err, fields) {
             console.log(" - " + fields);
             self.isRunning = false;
@@ -110,7 +119,6 @@ class TestManager {
     }
     
     testGetAllFromTable(self) {
-        
         var tableName = "test3";
         
         self.db.find(tableName, {}, function (err, docs) {

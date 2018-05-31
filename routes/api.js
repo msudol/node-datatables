@@ -17,7 +17,7 @@ class Api {
         
         // middleware that is specific to this router
         this.handler.use(function timeLog (req, res, next) {
-            console.log('Time: ', Date.now())
+            console.log('Time: ', Date.now());
             next();
         });
 
@@ -31,6 +31,8 @@ class Api {
             res.send('About API');
         });
 
+        // find
+        // api/find/test4/opts/{}
         this.handler.get('/find/:dbName/opts/:opts', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -46,13 +48,26 @@ class Api {
                     }
                     res.send(retDocs);
                 }
-            });
-            
+            });  
         });
         
-    }
-    
+        // create subtable
+        // api/create/{"name":"test5","fields":["time","temp"]}
+        this.handler.get('/create/:opts', function (req, res) {
+            console.log(req.params);
+            var table = JSON.parse(req.params.opts);
+            
+            self.db.subTable(table.name, table, function(err, docs) {
+                if (err) {
+                    res.send('An error occurred!');
+                } else {
+                    res.send("Table created or initialized");
+                }
+            });  
+        });
  
+    }  
+    
 }
 
 module.exports = Api;

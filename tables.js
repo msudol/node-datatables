@@ -1,7 +1,7 @@
 var Tables = [
     {name: 'test1', fields: ['a', 'b', 'c']},
     {name: 'test2', fields: ['d', 'e', 'f']},
-    {name: 'test3', fields: ['g', 'h', 'i']}
+    {name: 'test3', fields: ['g', 'h', 'i'], unique: ['i']}
 ];
 
 module.exports = Tables;

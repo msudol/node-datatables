@@ -52,7 +52,13 @@ class TableManager {
         } 
     }
     
-    // creates a subtable within this table manager
+    /**
+     * Create a sub table 
+     * @param   {string} tableName [A unique table name]
+     * @param   {object}   tableObj  [The table object to create, expects {name: str, fields: array, unique: array}]
+     * @param   {function} callback  [Callback Function]
+     * @returns {function} [Callback Function]
+     */
     subTable(tableName, tableObj, callback) {  
         var self = this;
         var tableName = tableName;
@@ -64,12 +70,26 @@ class TableManager {
             if (err) {
                 console.error(err);
             }
+            
+            // create the new subtable
             self.db[tableName] = new Datastore({filename: 'db/' + tableName + '.db', autoload: true});
+            
+            // if the table object has a unique field, make some fields be unique.
+            if ((tableObj.unique !== undefined) && (tableObj.unique.length > 0)) {
+                for (var i = 0; i < tableObj.unique.length; i++) {
+                    // ensure index on any fields that are to be unique
+                    self.db[tableName].ensureIndex({ fieldName: tableObj.unique[i], unique: true }, function (err) {
+                        if (err) {
+                            console.error(err);
+                        }
+                    });
+                }
+            }
             
             // no doc reference in the root database was found - need to create the table for tracking
             if (docs.length == 0) {
                 self.db[self.rootName].insert(tableObj, function (err, newDoc) {   
-                    // init the datastore for this table.name if exists OR create it
+                    // init the datastore for this table.name into the root tracking if exists OR create it
                     if (err) {
                         console.error(err);
                     }
@@ -86,17 +106,14 @@ class TableManager {
     }
     
     // extend the nedb/mongo find function for tableMan class
-    find(tableName, findStr, callback) {
-        
+    find(tableName, findStr, callback) {   
         var self = this;
         
         self.db[tableName].find(findStr, function(err, docs) {
             if (err) {
                 console.error(err);
             }   
-            
-            if (self.logging) console.log("Searching " + tableName + " for " + findStr + ": Found " + docs.length + " docs.");
-            
+            if (self.logging) console.log("Searching " + tableName + " for " + JSON.stringify(findStr) + ": Found " + docs.length + " docs.");
             return callback(err, docs);
         }); 
     }
