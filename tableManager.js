@@ -54,10 +54,10 @@ class TableManager {
     
     /**
      * Create a sub table 
-     * @param   {string} tableName [A unique table name]
-     * @param   {object}   tableObj  [The table object to create, expects {name: str, fields: array, unique: array}]
-     * @param   {function} callback  [Callback Function]
-     * @returns {function} [Callback Function]
+     * @param   {string} tableName - A unique table name
+     * @param   {object}   tableObj - The table object to create, expects {name: str, fields: array, unique: array}
+     * @param   {function} callback - Callback Function
+     * @returns {function} - Callback Function
      */
     subTable(tableName, tableObj, callback) {  
         var self = this;
@@ -106,14 +106,14 @@ class TableManager {
     }
     
     // extend the nedb/mongo find function for tableMan class
-    find(tableName, findStr, callback) {   
+    find(tableName, query, callback) {   
         var self = this;
         
-        self.db[tableName].find(findStr, function(err, docs) {
+        self.db[tableName].find(query, function(err, docs) {
             if (err) {
                 console.error(err);
             }   
-            if (self.logging) console.log("Searching " + tableName + " for " + JSON.stringify(findStr) + ": Found " + docs.length + " docs.");
+            if (self.logging) console.log("Searching " + tableName + " for " + JSON.stringify(query) + ": Found " + docs.length + " docs.");
             return callback(err, docs);
         }); 
     }
@@ -148,8 +148,8 @@ class TableManager {
         });
     }
     
-    // need to write to a table, data, with a return function
-    write(tableName, data, callback) {
+    // need to insert to a table, data, with a return function
+    insert(tableName, data, callback) {
         var data = data;
         var callback = callback;
         this.db[tableName].insert(data, function(err, newDoc) {
@@ -162,6 +162,20 @@ class TableManager {
         });
     }
 
+    // need to insert to a table, data, with a return function
+    update(tableName, query, data, options, callback) {
+        var data = data;
+        var callback = callback;
+        this.db[tableName].update(query, data, options, function(err, numReplaced) {
+
+            if (err) {
+                console.error(err);
+            } 
+            //TODO: query the root table and reject fields that are not allowed
+            return callback(err, numReplaced);
+        });
+    }
+    
     // assumes tablename is going to be unique from setting indexing and returns the fields key.
     allowedFields(tableName, callback) {
         var tableName = tableName;

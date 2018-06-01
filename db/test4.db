@@ -1,2 +1,4 @@
 {"key":"unique","h":"testing","i":"once","_id":"5VFhdRgSTDsRNPvb"}
+{"key":"lalala","h":"testing","i":"twice","_id":"BVYFTKOID33OnsDr"}
 {"$$indexCreated":{"fieldName":"key","unique":true,"sparse":false}}
+{"key":"lala","h":"testing","i":"thrice","_id":"xQFeblrjgOSV1Wbk"}

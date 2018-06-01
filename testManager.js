@@ -79,7 +79,7 @@ class TestManager {
     
     testWriteTable(self) {
         // test writing to a sub table
-        self.db.write("test3", {g:"hello ", h:"world", i:"!"}, function (err, newDoc) {
+        self.db.insert("test3", {g:"hello ", h:"world", i:"!"}, function (err, newDoc) {
             console.log("- Wrote data: " + JSON.stringify(newDoc));
             self.isRunning = false;
             return;
@@ -98,11 +98,11 @@ class TestManager {
     
     testNewSubTableWrite(self) {
         // test writing to a sub table
-        self.db.write("test4", {key:"unique", h:"testing", i:"once"}, function (err, newDoc) {
+        self.db.insert("test4", {key:"unique", h:"testing", i:"once"}, function (err, newDoc) {
             console.log("- Wrote data: " + JSON.stringify(newDoc));
             
             // try writing another to the unique key - key in this table
-             self.db.write("test4", {key:"unique", h:"testing", i:"twice"}, function (err, newDoc) {
+             self.db.insert("test4", {key:"unique", h:"testing", i:"twice"}, function (err, newDoc) {
                 console.log("- Wrote data: " + JSON.stringify(newDoc));
                 self.isRunning = false;
                 return;

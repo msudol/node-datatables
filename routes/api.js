@@ -31,14 +31,30 @@ class Api {
             res.send('About API');
         });
 
+        // create subtable
+        // api/create/{"name":"test5","fields":["time","temp"]}
+        this.handler.get('/create/:table', function (req, res) {
+            console.log(req.params);
+            var table = JSON.parse(req.params.table);
+            
+            self.db.subTable(table.name, table, function(err, docs) {
+                if (err) {
+                    res.send('An error occurred!');
+                } else {
+                    res.send("Table created or initialized");
+                }
+            });  
+        });
+        
+        
         // find
-        // api/find/test4/opts/{}
-        this.handler.get('/find/:dbName/opts/:opts', function (req, res) {
+        // api/find/test4/query/{}
+        this.handler.get('/find/:dbName/query/:query', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
-            var findStr = JSON.parse(req.params.opts);
+            var query = JSON.parse(req.params.query);
             
-            self.db.find(dbName, findStr, function(err, docs) {
+            self.db.find(dbName, query, function(err, docs) {
                 if (err) {
                     res.send('An error occurred!');
                 } else {
@@ -51,21 +67,43 @@ class Api {
             });  
         });
         
-        // create subtable
-        // api/create/{"name":"test5","fields":["time","temp"]}
-        this.handler.get('/create/:opts', function (req, res) {
+        // insert
+        // api/insert/test4/doc/{}
+        this.handler.get('/insert/:dbName/doc/:doc', function (req, res) {
             console.log(req.params);
-            var table = JSON.parse(req.params.opts);
+            var dbName = req.params.dbName;
+            var doc = JSON.parse(req.params.doc);
             
-            self.db.subTable(table.name, table, function(err, docs) {
+            self.db.insert(dbName, doc, function(err, newDoc) {
                 if (err) {
                     res.send('An error occurred!');
                 } else {
-                    res.send("Table created or initialized");
+                    var retDocs = JSON.stringify(newDoc);
+                    res.send(retDocs);
                 }
             });  
         });
- 
+        
+        
+        // update
+        // api/update/test4/query/{}/opts/{}
+        this.handler.get('/update/:dbName/query/:query/update/:update/opts/:opts', function (req, res) {
+            console.log(req.params);
+            var dbName = req.params.dbName;
+            var query = JSON.parse(req.params.query);
+            var update = JSON.parse(req.params.update);
+            var opts = JSON.parse(req.params.opts) || {};
+            
+            self.db.update(dbName, query, update, opts, function(err, numReplaced) {
+                if (err) {
+                    res.send('An error occurred!');
+                } else {
+                    var retDocs = numReplaced;
+                    res.send(retDocs);
+                }
+            });  
+        });
+            
     }  
     
 }
