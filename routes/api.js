@@ -71,6 +71,25 @@ class Api {
             });  
         });
         
+        //TODO: edit this find to data specifically tailored for datatables 
+        // should return a columns obj and a data obj
+        this.handler.get('/dfind/:dbName/query/:query', function (req, res) {
+            console.log(req.params);
+            var dbName = req.params.dbName;
+            var query = JSON.parse(req.params.query);
+            
+            self.db.find(dbName, query, function(err, docs) {
+                if (err) {
+                    res.send('An error occurred!');
+                } else {
+                    // send back a data obj
+                    var dtdocs = {data: docs};
+                    res.send(dtdocs);
+                }
+            });  
+        });
+        
+        
         // insert
         // api/insert/test4/doc/{}
         this.handler.get('/insert/:dbName/doc/:doc', function (req, res) {
