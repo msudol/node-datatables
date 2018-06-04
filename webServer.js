@@ -19,6 +19,8 @@ var NedbStore = require('nedb-session-store')(session);
 
 var router = express.Router();
 var Api = require('./routes/api');
+var Auth = require('./routes/auth');
+
 // yes it's a class for the webserver, why? I don't know yet but we'll see.
 class WebServer {
     
@@ -29,6 +31,7 @@ class WebServer {
         this.router = router; 
         
         this.api = new Api(this.db);
+        this.auth = new Auth();
         
         this.app.use(
             session({
@@ -46,48 +49,12 @@ class WebServer {
             })
         );
    
-        /*** TESTING AUTH - move to a submodule at some point ***/
-        
-        // Authentication and Authorization Middleware
-        var auth = function(req, res, next) {
-            console.log("Checking Authorization");
-            if (req.session && req.session.user === "user" && req.session.admin) {
-                return next();
-            } else {
-                return res.sendStatus(401);
-            }
-        };
-
-        // Login endpoint - uses a get query at the moment - http://localhost:3000/login/?username=user&password=password
-        app.get('/login', function (req, res) {
-          if (!req.query.username || !req.query.password) {
-            res.send('login failed');    
-          } else if (req.query.username === "user" || req.query.password === "password") {
-              // this is ugly and will have to be better
-            req.session.user = "user";
-            req.session.admin = true;
-            res.send("login success!");
-          }
-        });
-
-        // Logout endpoint
-        app.get('/logout', function (req, res) {
-          req.session.destroy();
-          res.send("logout success!");
-        });
-
+        // Create a private endpoint that requires basic authentication with session handling using express-session and session-nedb-store
+        this.app.use( "/private", [ this.auth.handler, express.static( __dirname + "/private" ) ] );   
         
         // serve static files from the public folder at /   
         this.app.use(express.static('public'));      
-        
-        // Get content endpoint
-        app.use( "/private", [ auth, express.static( __dirname + "/private" ) ] );      
-        
-        
-        /*** END AUTH TEST ***/
-        
-        
-        
+
         // the api route handler
         this.app.use('/api', this.api.handler); 
         
