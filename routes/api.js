@@ -1,6 +1,6 @@
 /* api.js 
 * 
-* Class will the api
+* A web API to extend the functions of NEDB.  The api functions behave and expect exactly what NEDB does
 * 
 */
 "use strict";
@@ -39,7 +39,11 @@ class Api {
             
             self.db.subTable(table.name, table, function(err, docs) {
                 if (err) {
-                    res.send('An error occurred!');
+                    if (err.errorType == "uniqueViolated") {
+                        res.send('Cannot write a duplicate unique key!');
+                    } else {  
+                        res.send('An error occurred!');
+                    }
                 } else {
                     res.send("Table created or initialized");
                 }
@@ -58,11 +62,11 @@ class Api {
                 if (err) {
                     res.send('An error occurred!');
                 } else {
-                    var retDocs = "";
-                    for (var i = 0; i < docs.length; i++) {
-                        retDocs += " - " + JSON.stringify(docs[i]) + "<br>";
-                    }
-                    res.send(retDocs);
+                    //var retDocs = "";
+                    //for (var i = 0; i < docs.length; i++) {
+                    //     retDocs += " - " + JSON.stringify(docs[i]) + "<br>";
+                    //}
+                    res.send(docs);
                 }
             });  
         });
@@ -76,7 +80,11 @@ class Api {
             
             self.db.insert(dbName, doc, function(err, newDoc) {
                 if (err) {
-                    res.send('An error occurred!');
+                    if (err.errorType == "uniqueViolated") {
+                        res.send('Cannot write a duplicate unique key!');
+                    } else {  
+                        res.send('An error occurred!');
+                    }
                 } else {
                     var retDocs = JSON.stringify(newDoc);
                     res.send(retDocs);
@@ -86,7 +94,7 @@ class Api {
         
         
         // update
-        // api/update/test4/query/{}/opts/{}
+        // api/update/test4/query/{}/update/{}/opts/{}
         this.handler.get('/update/:dbName/query/:query/update/:update/opts/:opts', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -96,7 +104,11 @@ class Api {
             
             self.db.update(dbName, query, update, opts, function(err, numReplaced) {
                 if (err) {
-                    res.send('An error occurred!');
+                    if (err.errorType == "uniqueViolated") {
+                        res.send('Cannot write a duplicate unique key!');
+                    } else {  
+                        res.send('An error occurred!');
+                    }
                 } else {
                     var retDocs = numReplaced;
                     res.send(retDocs);

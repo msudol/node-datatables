@@ -3,5 +3,5 @@
 {"name":"test4","fields":["key","val","derp"],"_id":"RKaIDmRk6l8oApgT"}
 {"name":"test2","fields":["d","e","f"],"_id":"UsIVluFbsj3T25YS"}
 {"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
-{"name":"test1","fields":["a","b","c"],"_id":"lgnxV0AE4XDDQrhs"}
-{"$$deleted":true,"_id":"lgnxV0AE4XDDQrhs"}
+{"name":"test1","fields":["a","b","c"],"_id":"F1Bj46HPNgd1mgTn"}
+{"$$deleted":true,"_id":"F1Bj46HPNgd1mgTn"}

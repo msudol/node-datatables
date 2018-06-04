@@ -80,8 +80,12 @@ class TableManager {
                     // ensure index on any fields that are to be unique
                     self.db[tableName].ensureIndex({ fieldName: tableObj.unique[i], unique: true }, function (err) {
                         if (err) {
-                            console.error(err);
-                        }
+                           if (err.errorType == "uniqueViolated") {
+                                console.error(err.errorType);
+                            } else {                  
+                                console.error(err);
+                            }
+                        } 
                     });
                 }
             }
@@ -91,8 +95,12 @@ class TableManager {
                 self.db[self.rootName].insert(tableObj, function (err, newDoc) {   
                     // init the datastore for this table.name into the root tracking if exists OR create it
                     if (err) {
-                        console.error(err);
-                    }
+                       if (err.errorType == "uniqueViolated") {
+                            console.error(err.errorType);
+                        } else {                  
+                            console.error(err);
+                        }
+                    } 
                     console.log("Creating sub table: " + tableName);
                     return callback();
                 });     
@@ -155,7 +163,11 @@ class TableManager {
         this.db[tableName].insert(data, function(err, newDoc) {
 
             if (err) {
-                console.error(err);
+               if (err.errorType == "uniqueViolated") {
+                    console.error(err.errorType);
+                } else {                  
+                    console.error(err);
+                }
             } 
             //TODO: query the root table and reject fields that are not allowed
             return callback(err, newDoc);
@@ -169,7 +181,11 @@ class TableManager {
         this.db[tableName].update(query, data, options, function(err, numReplaced) {
 
             if (err) {
-                console.error(err);
+               if (err.errorType == "uniqueViolated") {
+                    console.error(err.errorType);
+                } else {                  
+                    console.error(err);
+                }
             } 
             //TODO: query the root table and reject fields that are not allowed
             return callback(err, numReplaced);
