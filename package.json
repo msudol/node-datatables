@@ -1,13 +1,15 @@
 {
   "name": "node-datatables",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A project framework to build, edit, and view datatables",
   "main": "app.js",
   "repository": "https://github.com/msudol/node-datatables.git",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "express": "^4.16.3",
-    "nedb": "^1.8.0"
+    "express-session": "^1.15.6",
+    "nedb": "^1.8.0",
+    "nedb-session-store": "^1.1.2"
   },
   "devDependencies": {},
   "scripts": {
