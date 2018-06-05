@@ -3,3 +3,4 @@
 {"_id":"JCHGCQ15lGcvIbvdPb8P5jlvWKvqWly0","session":{"cookie":{"originalMaxAge":31536000000,"expires":{"$$date":1559678304065},"httpOnly":true,"path":"/"},"user":"user","admin":true},"expiresAt":{"$$date":1559752270889},"createdAt":{"$$date":1528142304075},"updatedAt":{"$$date":1528216270889}}
 {"$$deleted":true,"_id":"JCHGCQ15lGcvIbvdPb8P5jlvWKvqWly0"}
 {"_id":"lu-ftg59S62t6BqAUpRwRaGx8Gvfyv13","session":{"cookie":{"originalMaxAge":31536000000,"expires":{"$$date":1559752345326},"httpOnly":true,"path":"/"},"user":"user","loggedIn":true},"expiresAt":{"$$date":1559752345326},"createdAt":{"$$date":1528216345330},"updatedAt":{"$$date":1528216345330}}
+{"_id":"lu-ftg59S62t6BqAUpRwRaGx8Gvfyv13","session":{"cookie":{"originalMaxAge":31536000000,"expires":{"$$date":1559752345326},"httpOnly":true,"path":"/"},"user":"user","loggedIn":true},"expiresAt":{"$$date":1559752395719},"createdAt":{"$$date":1528216345330},"updatedAt":{"$$date":1528216395720}}
