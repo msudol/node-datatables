@@ -18,20 +18,22 @@ var app = express();
 var NedbStore = require('nedb-session-store')(session);
 
 var router = express.Router();
-var Api = require('./routes/api');
+var TableApi = require('./routes/tableApi');
 var Auth = require('./routes/auth');
 
 // yes it's a class for the webserver, why? I don't know yet but we'll see.
 class WebServer {
     
-    constructor(db) {
+    constructor(port, db, userDb) {
         
+        this.port = port;
         this.db = db;
+        this.userDb = userDb;
         this.app = app;
         this.router = router; 
         
-        this.api = new Api(this.db);
-        this.auth = new Auth();
+        this.tableApi = new TableApi(this.db);
+        this.auth = new Auth(this.userDb);
         
         this.app.use(
             session({
@@ -56,14 +58,21 @@ class WebServer {
         this.app.use(express.static('public'));      
 
         // the api route handler
-        this.app.use('/api', this.api.handler); 
+        this.app.use('/api', this.tableApi.handler); 
         
         // get /test custom route
         this.app.get('/test', (req, res) => res.send('Hello World!'));
-        
+                
+    }
+    
+    init() {
         // start the server
-        this.app.listen(3000, () => console.log('Example app listening on port 3000!')); 
-        
+        this.server = this.app.listen(this.port, () => console.log('Example app listening on port 3000!'));         
+    }
+    
+    stop() {
+        // stop the server - could be useful
+        this.server.close();
     }
     
 }

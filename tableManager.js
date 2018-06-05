@@ -30,7 +30,7 @@ class TableManager {
         this.logging = logging || false;
         
         // root instance will contain all the table references
-        this.db[this.rootName] = new Datastore({filename: this.path + '/' + this.rootName + '.db', autoload: true});
+        this.db[this.rootName] = new Datastore({filename: self.path + '/' + self.rootName + '.db', autoload: true});
         // Using a unique constraint with the index for root table names (filename)
         this.db[this.rootName].ensureIndex({ fieldName: 'name', unique: true }, function (err) {
             if (err) {
@@ -72,7 +72,7 @@ class TableManager {
             }
             
             // create the new subtable
-            self.db[tableName] = new Datastore({filename: 'db/' + tableName + '.db', autoload: true});
+            self.db[tableName] = new Datastore({filename: self.path + '/' + tableName + '.db', autoload: true});
             
             // if the table object has a unique field, make some fields be unique.
             if ((tableObj.unique !== undefined) && (tableObj.unique.length > 0)) {

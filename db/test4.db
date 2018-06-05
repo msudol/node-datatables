@@ -1,5 +1,0 @@
-{"key":"unique","h":"testing","i":"once","_id":"5VFhdRgSTDsRNPvb"}
-{"key":"lalala","h":"testing","i":"twice","_id":"BVYFTKOID33OnsDr"}
-{"key":"new","h":"hello","i":"world","_id":"WbCLLBeFpl8mb4to"}
-{"key":"lala","h":"yolo","i":"tengo","_id":"xQFeblrjgOSV1Wbk"}
-{"$$indexCreated":{"fieldName":"key","unique":true,"sparse":false}}
