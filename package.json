@@ -9,6 +9,7 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
+    "ldapauth-fork": "^4.0.2",
     "nedb": "^1.8.0",
     "nedb-session-store": "^1.1.2"
   },

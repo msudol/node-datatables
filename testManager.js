@@ -7,43 +7,45 @@
 
 class TestManager {
 
-    constructor(db) {
+    constructor(db, userDb) {
         this.db = db;
+        this.userDb = userDb;
         this.isRunning = false;
         return this;
     }
 
-    init() {   
+    init(callback) {   
         console.log("Running Tests");
         var self = this;
-        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable];
-        self.runner(self.testList, 0);
+        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser];
+        self.runner(self.testList, 0, callback);
     }
         
     // This will run tests in order
-    runner(testList, curTest) { 
+    runner(testList, curTest, callback) { 
         var self = this;
         self.isRunning = true; 
         console.log("=== TEST RUNNER === TEST: " + curTest);
         self.testList[curTest](self);
-        self.runnerCheck(testList, curTest, self);  
+        self.runnerCheck(testList, curTest, self, callback);  
     }
     
     // recursive function to check if a test is running
-    runnerCheck(testList, curTest, self) {    
+    runnerCheck(testList, curTest, self, callback) {    
         var isRunning = self.isRunning;
         
         if (isRunning) {
             setTimeout(function() {
-                self.runnerCheck(testList, curTest, self);
+                self.runnerCheck(testList, curTest, self, callback);
             }, 100)
         }
         else {
             if ((curTest + 1) == testList.length) {
                 console.log("=== Done tests! ===");
+                return callback();
             }
             else {
-                self.runner(testList, curTest + 1);
+                self.runner(testList, curTest + 1, callback);
             }
         }
     }
@@ -71,7 +73,12 @@ class TestManager {
     
     testDropTable(self) {
         self.db.drop("test1", function (err, numRemoved, tableName) {
-            console.log(" - Dropping " + tableName);
+            if (err) {
+                console.error(err)
+            }
+            else {
+                console.log(" - Dropping " + tableName);
+            }
             self.isRunning = false;
             return;
         });  
@@ -137,14 +144,41 @@ class TestManager {
         self.db.find(tableName, {}, function (err, docs) {
             console.log(" - Current tables in : " + tableName);
             // fails if tables need to be created because of aSync but works if they already exist
-            for (var i = 0; i < docs.length; i++) {
-                console.log(" - " + JSON.stringify(docs[i]));
+            if (docs.length == 0) {
+                console.log("No tables found.");
+            } else {
+                for (var i = 0; i < docs.length; i++) {
+                    console.log(" - " + JSON.stringify(docs[i]));
+                }
             }
             self.isRunning = false;
             return;            
         })
     }
     
+    testNewUserSubTable(self) {
+        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email"],"unique":["userName"]};
+        // test creating a new subtable
+        self.userDb.subTable(testTable.name, testTable, function () {
+            console.log(" - Created new users subtable");
+            self.isRunning = false;
+            return;
+        })
+    }
+    
+    testCreateUser(self) {
+        var tableName = "users";
+        
+        self.userDb.insert(tableName, {userName: "user", firstName: "Test", lastName: "Dummy", password: "password", email:"test@dummy.com"}, function (err, newDoc) {
+            if (err) {
+                console.log("- Error writing: " + err.errorType);
+            } else {
+                console.log("- Wrote data: " + JSON.stringify(newDoc));
+            }
+            self.isRunning = false;
+            return;
+        });
+    }    
 }
 
 module.exports = TestManager;

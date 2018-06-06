@@ -8,23 +8,21 @@
 var express = require('express');
 var router = express.Router();
 var bodyParser = require("body-parser");
+// for future var LdapAuth = require('ldapauth-fork');
 
 class Auth {
     
     constructor(userDb) {
-        
         // auth.handler will be the middleware we use in webserver for this private route
         this.userDb = userDb;
         this.handler = router;   
         this.userList = [];
         var self = this;
-        
         // initialize some things
         this.init(function() {
             // setup handlers AKA routes and middleware
             self.handlers();
         });
-
     }
     
     // very simple valid user check
@@ -49,8 +47,7 @@ class Auth {
             }
             if (password == docs[0].password) {
                 return success();
-            }
-            else {
+            } else {
                 return failure();
             }
         }); 
@@ -83,8 +80,7 @@ class Auth {
             if (!req.query.username || !req.query.password) {
                 console.log("Missing username or password");
                 res.send('login failed');    
-            } else if (self.isValidUser(req.query.username)) {
-                
+            } else if (self.isValidUser(req.query.username)) {        
                 self.isValidPassword(req.query.username, req.query.password, function() {
                     console.log("Login failed, bad password");
                     res.send('login failed');                     
@@ -99,18 +95,14 @@ class Auth {
                 console.log("Login failed, bad user");
                 res.send('login failed');     
             }
-            
         });
 
         self.handler.post('/login', function (req, res) {
-            
             console.log("Handling post login for: " + JSON.stringify(req.body));
-            
             if (!req.body.username || !req.body.password) {
                 console.log("Missing username or password");
                 res.send('login failed');    
-            } else if (self.isValidUser(req.body.username)) {
-                
+            } else if (self.isValidUser(req.body.username)) { 
                 self.isValidPassword(req.body.username, req.body.password, function() {
                     console.log("Login failed, bad password");
                     res.send('login failed');                     
@@ -125,7 +117,6 @@ class Auth {
                 console.log("Login failed, bad user");
                 res.send('login failed');     
             }
-            
         });
         
         //http://localhost:3000/<private>/logout

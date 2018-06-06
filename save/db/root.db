@@ -1,0 +1,4 @@
+{"name":"test3","fields":["g","h","i"],"unique":["i"],"users":["user"],"groups":[],"_id":"1RzP7B2jWAEuRZOG"}
+{"name":"test4","fields":["key","val","derp"],"unique":["key"],"_id":"ZYehl80vkqFzNub7"}
+{"name":"test2","fields":["d","e","f"],"unique":[],"users":[],"groups":["everyone"],"_id":"j3WACIxbKdtQyAGP"}
+{"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}

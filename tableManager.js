@@ -29,52 +29,75 @@ class TableManager {
         var callback = callback;
         this.logging = logging || false;
         
+        if (logging) console.log("Initializing TableManager for: " + self.path + "/" + self.rootName);
+        
         // root instance will contain all the table references
         this.db[this.rootName] = new Datastore({filename: self.path + '/' + self.rootName + '.db', autoload: true});
+        
         // Using a unique constraint with the index for root table names (filename)
         this.db[this.rootName].ensureIndex({ fieldName: 'name', unique: true }, function (err) {
             if (err) {
                 console.error(err);
+            } else {
+                if (logging) console.log("Ensure Index: Complete");
             }
+            // inspect the tables
+            self.inspectTables(callback, logging);
         });
+    }
+    
+    // called by init to inspect tables after ensuring the index.
+    inspectTables(callback, logging) {
+        var self = this;
+        var callback = callback;
+        this.logging = logging || false;
         
         // the tables param is sent as false - use root table listing of tables instead
         if (!this.tables) {
-            
+            if (logging) console.log("Inspecting Subtables from root.");
             self.db[this.rootName].find({}, function(err, docs) {
                 if (err) {
                     console.error(err);
-                }   
-                
-                for (var t = 0; t < docs.length; t++) {
-                    self.subTable(docs[t].name, docs[t], function(done) {
-                        //console.log(i);
+                } 
+                if (docs.length == 0) {
+                    console.log(self.path + '/' + self.rootName + " done initializing, running callback");
+                    return callback();                           
+                } else {
+                    var i = 0;
+                    for (var t = 0; t < docs.length; t++) {
+                        self.subTable(docs[t].name, docs[t], function(done) {
+                            i++;
+                            // the last subtable has finished initializing
+                            if (i >= docs.length) {
+                                console.log(self.path + '/' + self.rootName + " done initializing, running callback");
+                                return callback();        
+                            }
+                        });                       
+                    } 
+                }
+            }); 
+        } 
+        // tables were sent as a javascript object
+        else {
+            if (logging) console.log("Inspecting Subtables from default tables.");
+            if (self.tables.length == 0) {
+                console.log(self.path + '/' + self.rootName + " done initializing, running callback");
+                return callback();                           
+            } else {       
+                var i = 0;
+                for (var t = 0; t < self.tables.length; t++) { 
+                    // call subtable create function
+                    self.subTable(self.tables[t].name, self.tables[t], function(done) {
                         i++;
                         // the last subtable has finished initializing
-                        if (i >= docs.length) {
+                        if (i >= self.tables.length) {
+                            console.log(self.path + '/' + self.rootName + " done initializing, running callback");
                             return callback();        
                         }
-                    });                       
-                } 
-            }); 
-            
-        } else {
-            
-            // tables were sent as a javascript object
-            var i = 0;
-            for (var t = 0; t < self.tables.length; t++) { 
-                // call subtable create function
-                self.subTable(self.tables[t].name, self.tables[t], function(done) {
-                    //console.log(i);
-                    i++;
-                    // the last subtable has finished initializing
-                    if (i >= self.tables.length) {
-                        return callback();        
-                    }
-                });   
+                    });   
+                }
             }
-            
-        }
+        }        
     }
     
     /**
@@ -142,6 +165,10 @@ class TableManager {
     find(tableName, query, callback) {   
         var self = this;
         
+        if (this.db[tableName] === undefined) {
+            return callback("Table doesn't exist!", []);
+        }
+        
         self.db[tableName].find(query, function(err, docs) {
             if (err) {
                 console.error(err);
@@ -156,6 +183,10 @@ class TableManager {
         var self = this;
         var tableName = tableName;
         var callback = callback;
+        
+        if (this.db[tableName] === undefined) {
+            return callback("Table doesn't exist!", 0, tableName);
+        }
         
         this.db[tableName].remove({ }, { multi: true }, function (err, numRemoved) {
             if (err) {
@@ -185,6 +216,11 @@ class TableManager {
     insert(tableName, data, callback) {
         var data = data;
         var callback = callback;
+        
+        if (this.db[tableName] === undefined) {
+            return callback("Table doesn't exist!", []);
+        }
+        
         this.db[tableName].insert(data, function(err, newDoc) {
 
             if (err) {
@@ -203,6 +239,11 @@ class TableManager {
     update(tableName, query, data, options, callback) {
         var data = data;
         var callback = callback;
+        
+        if (this.db[tableName] === undefined) {
+            return callback("Table doesn't exist!", 0);
+        }
+        
         this.db[tableName].update(query, data, options, function(err, numReplaced) {
 
             if (err) {
@@ -221,10 +262,16 @@ class TableManager {
     allowedFields(tableName, callback) {
         var tableName = tableName;
         console.log("Checking allowed fields for: " + tableName);
+        
+        if (this.db[tableName] === undefined) {
+            return callback("Table doesn't exist!");
+        }
+        
         this.db[this.rootName].find({name: tableName}, function(err, docs) {   
             return callback(err, docs[0].fields);
         });  
     }
+    
     
 }
 
