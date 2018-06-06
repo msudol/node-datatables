@@ -5,18 +5,22 @@
 */
 "use strict";
 
+// import TableManager class 
+var UserManager = require('./userManager.js');
+
 class TestManager {
 
     constructor(db, userDb) {
         this.db = db;
         this.userDb = userDb;
         this.isRunning = false;
+        this.userManager = new UserManager(this.userDb);
         return this;
     }
 
     init(callback) {   
         var self = this;
-        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser];
+        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testVerifyUser];
         self.runner(self.testList, 0, callback);
     }
         
@@ -163,7 +167,7 @@ class TestManager {
     testNewUserSubTable(self) {
         console.log(" - Test create new user table");
         
-        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email"],"unique":["userName"]};
+        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email","salt"],"unique":["userName"]};
         // test creating a new subtable
         self.userDb.subTable(testTable.name, testTable, function () {
             console.log(" - Created new users subtable");
@@ -173,18 +177,45 @@ class TestManager {
     }
     
     testCreateUser(self) {
-        console.log(" - Test create new user");
-        var tableName = "users";
-        self.userDb.insert(tableName, {userName: "user", firstName: "Test", lastName: "Dummy", password: "password", email:"test@dummy.com"}, function (err, newDoc) {
+        console.log(" - Test create new users");
+        
+        self.userManager.createUser("user","Test","Dummy","password","test@dummy.com", function(err, newDoc) {
             if (err) {
                 console.log("- Error writing: " + err.errorType);
             } else {
                 console.log("- Wrote data: " + JSON.stringify(newDoc));
             }
+            
+            // create another user
+            self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com", function(err, newDoc) {
+                if (err) {
+                    console.log("- Error writing: " + err.errorType);
+                } else {
+                    console.log("- Wrote data: " + JSON.stringify(newDoc));
+                }
+                self.isRunning = false;
+                return;
+            }); 
+            
+        });   
+        
+  
+    }
+    
+    testVerifyUser(self) {
+        console.log(" - Test verify user");
+        
+        self.userManager.verifyUser("user", "password", function(err, isTrue) {
+            if (isTrue) {
+                console.log("Yay!");
+            } else {
+                console.log("Bah.");
+            }
+            
             self.isRunning = false;
-            return;
+            return;            
         });
-    }    
+    }
 }
 
 module.exports = TestManager;

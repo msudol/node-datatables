@@ -1,2 +1,2 @@
-{"name":"test4","fields":["key","val","derp"],"unique":["key"],"_id":"tC8ysLyaqclQvkhv"}
+{"name":"test4","fields":["key","val","derp"],"unique":["key"],"_id":"09ZBx5b5qCsGviQl"}
 {"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}

@@ -14,6 +14,9 @@ var session = require('express-session');
 var express = require('express');
 var app = express();
 
+// for encrypting at some point
+var crypto = require('crypto');
+
 // connect the NedbStore to session
 var NedbStore = require('nedb-session-store')(session);
 

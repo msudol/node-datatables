@@ -1,2 +1,3 @@
-{"userName":"user","firstName":"Test","lastName":"Dummy","password":"password","email":"test@dummy.com","_id":"DKNaqvWxGsXCFcmD"}
+{"userName":"user","firstName":"Test","lastName":"Dummy","password":"dMO8AqNBlkpiQQfdYw1WMmOPPsp6ghCdODLrP1zsVRYYqCCiMzRCS1vmim+EbKylob+pV8ZGBIVvQGvZ4HpriFMPDA2ZqsHyC+j2QLQ7EtB9qM9z1K/f/gwaDq0GFIgKsqhlk8Tb+s0=","email":"test@dummy.com","_id":"6Eol3uzn5w7UnOaH"}
+{"userName":"user2","firstName":"Test","lastName":"Dummy","password":"J6NKTSft5Vim4A2TY5uFUBv7dT4zxa3c4gabV4IlNcrL6m01xGrarbfkGeDk69iTNyLCE4k1w200crx/dnipDDRJgWetJVlZxPyp9d/FKnBdRRvphj9BdAv91C1BJNCLcR8KhxwYJ5k=","email":"test@dummy.com","_id":"LjYiEpMCQEFV6tWK"}
 {"$$indexCreated":{"fieldName":"userName","unique":true,"sparse":false}}

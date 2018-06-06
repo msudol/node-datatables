@@ -28,7 +28,7 @@ class Auth {
     // very simple valid user check
     isValidUser(userName) {
         var self = this;
-        console.log("Checking valid user: " + userName);
+        //console.log("Checking valid user: " + userName);
         var validUsers = self.userList;
         if (validUsers.includes(userName)) {
             return true;
@@ -128,7 +128,6 @@ class Auth {
         
         // middleware that is specific to this router
         self.handler.use(function(req, res, next) {
-            //console.log("Checking Authorization");
             if (req.session && self.isValidUser(req.session.user) && req.session.loggedIn) {
                 return next();
             } else {
