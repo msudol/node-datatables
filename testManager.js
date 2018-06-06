@@ -15,7 +15,6 @@ class TestManager {
     }
 
     init(callback) {   
-        console.log("Running Tests");
         var self = this;
         self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser];
         self.runner(self.testList, 0, callback);
@@ -60,8 +59,8 @@ class TestManager {
     
     testRootTableDocs(self) { 
         // get the root table docs
+        console.log(" - Current tables managed: ");
         self.db.find(self.db.rootName, {}, function (err, docs) {
-            console.log(" - Current tables managed: ");
             // fails if tables need to be created because of aSync but works if they already exist
             for (var i = 0; i < docs.length; i++) {
                 console.log(" - " + docs[i].name);
@@ -72,6 +71,7 @@ class TestManager {
     }
     
     testDropTable(self) {
+        console.log(" - Test dropping table");
         self.db.drop("test1", function (err, numRemoved, tableName) {
             if (err) {
                 console.error(err)
@@ -86,6 +86,7 @@ class TestManager {
     
     testWriteTable(self) {
         // test writing to a sub table - this should fail if this already exists since this table has a unique key set
+        console.log(" - Test writing table");
         self.db.insert("test3", {g:"hello ", h:"world", i:"!"}, function (err, newDoc) {
             if (err) {
                 console.log("- Error writing: " + err.errorType);
@@ -99,6 +100,7 @@ class TestManager {
     
     testNewSubTable(self) {
         var testTable = {name: 'test4', fields: ['key', 'val', 'derp'], unique: ['key']};
+        console.log(" - Test creating table");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
             console.log(" - Created new subtable");
@@ -109,6 +111,7 @@ class TestManager {
     
     testNewSubTableWrite(self) {
         // test writing to a sub table
+        console.log(" - Test new sub table writing")
         self.db.insert("test4", {key:"unique", h:"testing", i:"once"}, function (err, newDoc) {
             if (err) {
                 console.log("- Error writing: " + err.errorType);
@@ -131,6 +134,7 @@ class TestManager {
     }
     
     testTableAllowedFields(self) {
+        console.log(" - Testing allowed fields");
         self.db.allowedFields("test2", function (err, fields) {
             console.log(" - " + fields);
             self.isRunning = false;
@@ -140,7 +144,7 @@ class TestManager {
     
     testGetAllFromTable(self) {
         var tableName = "test3";
-        
+        console.log(" - Test get all from table");
         self.db.find(tableName, {}, function (err, docs) {
             console.log(" - Current tables in : " + tableName);
             // fails if tables need to be created because of aSync but works if they already exist
@@ -157,6 +161,8 @@ class TestManager {
     }
     
     testNewUserSubTable(self) {
+        console.log(" - Test create new user table");
+        
         var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email"],"unique":["userName"]};
         // test creating a new subtable
         self.userDb.subTable(testTable.name, testTable, function () {
@@ -167,8 +173,8 @@ class TestManager {
     }
     
     testCreateUser(self) {
+        console.log(" - Test create new user");
         var tableName = "users";
-        
         self.userDb.insert(tableName, {userName: "user", firstName: "Test", lastName: "Dummy", password: "password", email:"test@dummy.com"}, function (err, newDoc) {
             if (err) {
                 console.log("- Error writing: " + err.errorType);

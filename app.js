@@ -33,7 +33,6 @@ var onRootTableInit = function (db) {
     }
     // tests or no tests on startup
     if (processArgs.includes("runtests")) {
-        console.log("Running Tests");
         var initTest = new TestManager(db, userDb);
         // run the tests and when done callback
         initTest.init(function() {
