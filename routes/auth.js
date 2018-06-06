@@ -10,11 +10,14 @@ var router = express.Router();
 var bodyParser = require("body-parser");
 // for future var LdapAuth = require('ldapauth-fork');
 
+var UserManager = require('../userManager.js');
+
 class Auth {
     
     constructor(userDb) {
         // auth.handler will be the middleware we use in webserver for this private route
         this.userDb = userDb;
+        this.userManager = new UserManager(this.userDb);
         this.handler = router;   
         this.userList = [];
         var self = this;
@@ -41,7 +44,18 @@ class Auth {
     isValidPassword(userName, password, failure, success) {
         var self = this;
         
-        self.userDb.find("users", { userName: userName }, function(err, docs) {   
+        self.userManager.verifyUser(userName, password, function(err, isTrue) {
+            if (err) {
+                console.error(err);
+            }            
+            if (isTrue) {
+                return success();
+            } else {
+                return failure();
+            }          
+        });
+
+        /*self.userDb.find("users", { userName: userName }, function(err, docs) {   
             if (err) {
                 console.error(err);
             }
@@ -50,7 +64,8 @@ class Auth {
             } else {
                 return failure();
             }
-        }); 
+        }); */
+        
     }
     
     init(callback) {
