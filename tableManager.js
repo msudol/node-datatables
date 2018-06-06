@@ -38,18 +38,43 @@ class TableManager {
             }
         });
         
-        var i = 0;
-        for (var t = 0; t < this.tables.length; t++) { 
-            // call subtable create function
-            this.subTable(this.tables[t].name, this.tables[t], function(done) {
-                //console.log(i);
-                i++;
-                // the last subtable has finished initializing
-                if (i >= self.tables.length) {
-                    return callback();        
-                }
-            });   
-        } 
+        // the tables param is sent as false - use root table listing of tables instead
+        if (!this.tables) {
+            
+            self.db[this.rootName].find({}, function(err, docs) {
+                if (err) {
+                    console.error(err);
+                }   
+                
+                for (var t = 0; t < docs.length; t++) {
+                    self.subTable(docs[t].name, docs[t], function(done) {
+                        //console.log(i);
+                        i++;
+                        // the last subtable has finished initializing
+                        if (i >= docs.length) {
+                            return callback();        
+                        }
+                    });                       
+                } 
+            }); 
+            
+        } else {
+            
+            // tables were sent as a javascript object
+            var i = 0;
+            for (var t = 0; t < self.tables.length; t++) { 
+                // call subtable create function
+                self.subTable(self.tables[t].name, self.tables[t], function(done) {
+                    //console.log(i);
+                    i++;
+                    // the last subtable has finished initializing
+                    if (i >= self.tables.length) {
+                        return callback();        
+                    }
+                });   
+            }
+            
+        }
     }
     
     /**

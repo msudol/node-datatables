@@ -1,0 +1,2 @@
+{"key":"unique","h":"testing","i":"once","_id":"U4iks4Nuv9G7YlWT"}
+{"$$indexCreated":{"fieldName":"key","unique":true,"sparse":false}}

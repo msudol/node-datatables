@@ -52,15 +52,19 @@ class WebServer {
         );
    
         // Create a private endpoint that requires basic authentication with session handling using express-session and session-nedb-store
+        //todo: remove this, uneeded
         this.app.use( "/private", [ this.auth.handler, express.static( __dirname + "/private" ) ] );   
+        
+        this.app.use( "/client", [ this.auth.handler, express.static( __dirname + "/client" ) ] );   
         
         // serve static files from the public folder at /   
         this.app.use(express.static('public'));      
 
-        // the api route handler
-        this.app.use('/api', this.tableApi.handler); 
+        // the api route handler - only allow the api if  authorized
+        this.app.use('/api', [this.auth.handler, this.tableApi.handler]); 
         
-        // get /test custom route
+        // get /test custom route  
+        //todo: remove this 
         this.app.get('/test', (req, res) => res.send('Hello World!'));
                 
     }

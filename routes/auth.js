@@ -7,7 +7,7 @@
 
 var express = require('express');
 var router = express.Router();
-
+var bodyParser = require("body-parser");
 
 class Auth {
     
@@ -70,10 +70,15 @@ class Auth {
     
     handlers() {
         var self = this;
+        
+        // need to handle post requests
+        self.handler.use(bodyParser.urlencoded({ extended: false }));
+        self.handler.use(bodyParser.json());
+        
         /*** Important Note:  Login and Logout routes must supercede the authorization handler ***/
         
         //http://localhost:3000/<private>/login?username=user&password=password
-        //TODO: improve security measures
+        //TODO: improve security measures - like, not using GET for logins
         self.handler.get('/login', function (req, res) {
             if (!req.query.username || !req.query.password) {
                 console.log("Missing username or password");
@@ -97,8 +102,34 @@ class Auth {
             
         });
 
+        self.handler.post('/login', function (req, res) {
+            
+            console.log("Handling post login for: " + JSON.stringify(req.body));
+            
+            if (!req.body.username || !req.body.password) {
+                console.log("Missing username or password");
+                res.send('login failed');    
+            } else if (self.isValidUser(req.body.username)) {
+                
+                self.isValidPassword(req.body.username, req.body.password, function() {
+                    console.log("Login failed, bad password");
+                    res.send('login failed');                     
+                }, function() {
+                    // this is ugly and will have to be better
+                    req.session.user = req.body.username;
+                    req.session.loggedIn = true;
+                    res.send("login success!"); 
+                    console.log("Logging in with user: " + req.body.username);                    
+                });
+            } else {
+                console.log("Login failed, bad user");
+                res.send('login failed');     
+            }
+            
+        });
+        
         //http://localhost:3000/<private>/logout
-        self.handler.get('/logout', function (req, res) {
+        self.handler.all('/logout', function (req, res) {
             req.session.destroy(function() {
                 res.send("logout success!");    
             });

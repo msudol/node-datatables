@@ -1,1 +1,24 @@
-testing
+<html>
+  <head>
+    <title>Simple login</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        var user,pass;
+        $("#submit").click(function(){
+          user=$("#username").val();
+          pass=$("#password").val();
+          $.post("http://localhost:3000/client/login", {username: user,password: pass}, function(data){
+                alert(data);
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Hello people !</h1>
+    <input type="TEXT" id="username" size="40"><br>
+    <input type="password" id="password" size="40"><br>
+    <input type="button" id="submit" value="Submit">
+  </body>
+</html>

@@ -8,7 +8,7 @@ In development, working with NEDB at first and then eventually MongoDB.
 
 ## Web server 
 
-Web server running on Express.
+Web server running on Express. For persistence consider using PM2 or another node daemon or process monitor.
 
 ## Concepts & Design
 
@@ -25,3 +25,11 @@ The API will be able to call on required Table Manager functions in order to man
 ### Client
 
 The client will be a graphical front, that will leverage the API in order to manage and use tables.
+
+## Installing & Running
+
+```
+npm install
+node app <runtests>
+```
+

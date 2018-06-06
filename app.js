@@ -22,7 +22,11 @@ var defaultUsers = require('./tests/defaultUsers.js');
 /* DOING SOME THINGS TO EXERCISE TABLEMANAGER */
 // initialize an instance of TableManager, with the root table table and the tables it's going to manage.
 // syntax (root table name, list of tables to manage, relative path for installation (defaults to 'db'), optional type of nedb or mongo)
-var db = new TableManager('root', RootTables, 'db');
+//adding false for the 2nd param makes the manager initiliaze from what lives in root
+var db = new TableManager('root', false, 'db');
+//var db = new TableManager('root', RootTables, 'db');
+
+// init the userDB - we can add false to not user the test table above at some point
 var userDb = new TableManager('root', UserTables, 'db/users');
 
 // function will be sent to the table init function as a callback.
