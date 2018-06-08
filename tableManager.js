@@ -29,7 +29,7 @@ class TableManager {
         var callback = callback;
         this.logging = logging || false;
         
-        if (logging) console.log("Initializing TableManager for: " + self.path + "/" + self.rootName);
+        if (self.logging) console.log("Initializing TableManager for: " + self.path + "/" + self.rootName);
         
         // root instance will contain all the table references
         this.db[this.rootName] = new Datastore({filename: self.path + '/' + self.rootName + '.db', autoload: true});
@@ -39,7 +39,7 @@ class TableManager {
             if (err) {
                 console.error(err);
             } else {
-                if (logging) console.log("Ensure Index: Complete");
+                if (self.logging) console.log("Ensure Index: Complete");
             }
             // inspect the tables
             self.inspectTables(callback, logging);
@@ -54,13 +54,13 @@ class TableManager {
         
         // the tables param is sent as false - use root table listing of tables instead
         if (!this.tables) {
-            if (logging) console.log("Inspecting Subtables from root.");
+            if (self.logging) console.log("Inspecting Subtables from root.");
             self.db[this.rootName].find({}, function(err, docs) {
                 if (err) {
                     console.error(err);
                 } 
                 if (docs.length == 0) {
-                    console.log(self.path + '/' + self.rootName + " done initializing, running callback");
+                    if (self.logging) console.log(self.path + '/' + self.rootName + " done initializing, running callback");
                     return callback();                           
                 } else {
                     var i = 0;
@@ -69,7 +69,7 @@ class TableManager {
                             i++;
                             // the last subtable has finished initializing
                             if (i >= docs.length) {
-                                console.log(self.path + '/' + self.rootName + " done initializing, running callback");
+                                if (self.logging) console.log(self.path + '/' + self.rootName + " done initializing, running callback");
                                 return callback();        
                             }
                         });                       
@@ -79,9 +79,9 @@ class TableManager {
         } 
         // tables were sent as a javascript object
         else {
-            if (logging) console.log("Inspecting Subtables from default tables.");
+            if (self.logging) console.log("Inspecting Subtables from default tables.");
             if (self.tables.length == 0) {
-                console.log(self.path + '/' + self.rootName + " done initializing, running callback");
+                if (self.logging) console.log(self.path + '/' + self.rootName + " done initializing, running callback");
                 return callback();                           
             } else {       
                 var i = 0;
@@ -91,7 +91,7 @@ class TableManager {
                         i++;
                         // the last subtable has finished initializing
                         if (i >= self.tables.length) {
-                            console.log(self.path + '/' + self.rootName + " done initializing, running callback");
+                            if (self.logging) console.log(self.path + '/' + self.rootName + " done initializing, running callback");
                             return callback();        
                         }
                     });   
@@ -149,12 +149,12 @@ class TableManager {
                             console.error(err);
                         }
                     } 
-                    console.log("Creating sub table: " + tableName);
+                    if (self.logging) console.log("Creating sub table: " + tableName);
                     return callback();
                 });     
             }
             else {
-                console.log("Initializing sub table: " + tableName);
+                if (self.logging) console.log("Initializing sub table: " + tableName);
                 return callback();
             }
             
@@ -214,6 +214,7 @@ class TableManager {
     
     // need to insert to a table, data, with a return function
     insert(tableName, data, callback) {
+        var self = this;
         var data = data;
         var callback = callback;
         
@@ -237,6 +238,7 @@ class TableManager {
 
     // need to insert to a table, data, with a return function
     update(tableName, query, data, options, callback) {
+        var self = this;
         var data = data;
         var callback = callback;
         
@@ -260,8 +262,9 @@ class TableManager {
     
     // assumes tablename is going to be unique from setting indexing and returns the fields key.
     allowedFields(tableName, callback) {
+        var self = this;
         var tableName = tableName;
-        console.log("Checking allowed fields for: " + tableName);
+        if (self.logging) console.log("Checking allowed fields for: " + tableName);
         
         if (this.db[tableName] === undefined) {
             return callback("Table doesn't exist!");

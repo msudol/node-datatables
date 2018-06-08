@@ -23,6 +23,7 @@ var NedbStore = require('nedb-session-store')(session);
 var router = express.Router();
 var TableApi = require('./routes/tableApi');
 var Auth = require('./routes/auth');
+var CheckSess = require('./routes/checkSess');
 
 // yes it's a class for the webserver, why? I don't know yet but we'll see.
 class WebServer {
@@ -35,8 +36,10 @@ class WebServer {
         this.app = app;
         this.router = router; 
         
+        // this feels bloated now
         this.tableApi = new TableApi(this.db);
         this.auth = new Auth(this.userDb);
+        this.checkSess = new CheckSess(this.userDb);
         
         this.app.use(
             session({
@@ -47,7 +50,9 @@ class WebServer {
                     path: '/',
                     httpOnly: true,
                     //maxAge: 365 * 24 * 60 * 60 * 1000   // e.g. 1 year
-                    maxAge: 24 * 60 * 60 * 1000   // e.g. 1 year
+                    maxAge: 24 * 60 * 60 * 1000,   // e.g. 1 year
+                    secure: false,        // set to true to ensure only usable over https
+                    ephemeral: true     // deletes cookie when browser is closed        
                 },
                 store: new NedbStore({
                     filename: 'sess/nedb_persistence_file.db'
@@ -55,22 +60,15 @@ class WebServer {
             })
         );
    
-        // Create a private endpoint that requires basic authentication with session handling using express-session and session-nedb-store
-        //todo: remove this, uneeded
-        this.app.use( "/private", [ this.auth.handler, express.static( __dirname + "/private" ) ] );   
-        
-        this.app.use( "/client", [ this.auth.handler, express.static( __dirname + "/client" ) ] );   
+        // Create a private endpoint that requires authentication with session handling using express-session and session-nedb-store    
+        this.app.use( '/client', [ this.auth.handler, express.static( __dirname + '/client' ) ] );   
         
         // serve static files from the public folder at /   
-        this.app.use(express.static('public'));      
+        this.app.use( [ this.checkSess.handler, express.static('public') ] );      
 
         // the api route handler - only allow the api if  authorized
-        this.app.use('/api', [this.auth.handler, this.tableApi.handler]); 
-        
-        // get /test custom route  
-        //todo: remove this 
-        this.app.get('/test', (req, res) => res.send('Hello World!'));
-                
+        this.app.use( '/api', [ this.auth.handler, this.tableApi.handler ] ); 
+       
     }
     
     init() {

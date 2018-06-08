@@ -1,6 +1,6 @@
-/* Auth.js 
+/* checkSess 
 * 
-* Authorization handler
+* Check for authorization on the public routes (return session info if exists)
 * 
 */
 "use strict";
@@ -12,7 +12,7 @@ var bodyParser = require("body-parser");
 
 var UserManager = require('../userManager.js');
 
-class Auth {
+class CheckSess {
     
     constructor(userDb) {
         // auth.handler will be the middleware we use in webserver for this private route
@@ -64,8 +64,7 @@ class Auth {
         self.userDb.find("users", {}, function(err, docs) {           
             for (var i = 0; i < docs.length; i++) {
                 self.userList.push(docs[i].userName);
-            }
-            console.log("Found users doc: " + self.userList);   
+            } 
             return callback();
         });
     }
@@ -135,14 +134,15 @@ class Auth {
         self.handler.use(function(req, res, next) {
             // check the session for the value loggedIn 
             if (req.session && self.isValidUser(req.session.user) && req.session.loggedIn) {
-                return next();
+                // do something for valid users
+                next();
             } else {
-                // could return a location instead of a 401
-                return res.sendStatus(401);
+                // do something for anon users
+                next();
             }
         });         
     }
     
 }
 
-module.exports = Auth;
+module.exports = CheckSess;
