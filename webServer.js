@@ -46,7 +46,8 @@ class WebServer {
                 cookie: {
                     path: '/',
                     httpOnly: true,
-                    maxAge: 365 * 24 * 60 * 60 * 1000   // e.g. 1 year
+                    //maxAge: 365 * 24 * 60 * 60 * 1000   // e.g. 1 year
+                    maxAge: 24 * 60 * 60 * 1000   // e.g. 1 year
                 },
                 store: new NedbStore({
                     filename: 'sess/nedb_persistence_file.db'

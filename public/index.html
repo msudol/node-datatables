@@ -1,24 +1,78 @@
-<html>
-  <head>
-    <title>Simple login</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function(){
-        var user,pass;
-        $("#submit").click(function(){
-          user=$("#username").val();
-          pass=$("#password").val();
-          $.post("http://localhost:3000/client/login", {username: user,password: pass}, function(data){
-                alert(data);
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' gap://ready file://* * 'unsafe-inline' 'unsafe-eval' data:;
+															img-src * 'unsafe-inline' 'unsafe-eval' data:;
+															style-src * 'unsafe-inline' 'unsafe-eval' data:;">	
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <meta http-equiv="Access-Control-Allow-Origin" content="*">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="rcss/bootstrap.min.css">
+        
+        <!-- Font Awesome 4.0 CSS -->
+        <link rel="stylesheet" href="assets/fontawesome/fontawesome-all.css" >
+        
+        <!-- Roboto Font  -->
+        <link href="rcss/Roboto.css">                 
+    
+        <!-- Other CSS -->
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <link rel="stylesheet" type="text/css" href="css/login.css">
+        
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="css/custom.css">        
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script type="text/javascript" src="rjs/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="rjs/popper.min.js"></script>
+        <script type="text/javascript" src="rjs/bootstrap.min.js"></script>
+        
+        <title>Login</title>
+
+        <script>
+          $(document).ready(function(){
+            var user,pass;
+              
+            $("body").on("submit", '#form-signin', function(event) { 
+                event.preventDefault();
+                user=$("#username").val();
+                pass=$("#password").val();
+                $.post("http://localhost:3000/client/login", {username: user,password: pass}, function(data){
+                    alert(data);
+                });
+            });
           });
-        });
-      });
-    </script>
-  </head>
-  <body>
-    <h1>Hello people !</h1>
-    <input type="TEXT" id="username" size="40"><br>
-    <input type="password" id="password" size="40"><br>
-    <input type="button" id="submit" value="Submit">
-  </body>
+        </script>
+    </head>
+    <body>
+
+    <div class="d-flex justify-content-center">
+        <img src="img/logo.png">
+    </div>
+    
+    <!-- Login form handler watches for submission on the ID: form-signin -->
+    <form id="form-signin" class="form-signin" action="#">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="userName" class="sr-only">Username</label>
+        <input type="test" id="username" class="form-control" placeholder="Username" required autofocus>
+        <br>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="Password" required>
+        <div class="checkbox">
+        <label>
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+        </div>
+        <button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+      
+    </body>
+    
 </html>

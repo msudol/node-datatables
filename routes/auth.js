@@ -44,6 +44,7 @@ class Auth {
     isValidPassword(userName, password, failure, success) {
         var self = this;
         
+        // call the verify user routine
         self.userManager.verifyUser(userName, password, function(err, isTrue) {
             if (err) {
                 console.error(err);
@@ -53,18 +54,7 @@ class Auth {
             } else {
                 return failure();
             }          
-        });
-
-        /*self.userDb.find("users", { userName: userName }, function(err, docs) {   
-            if (err) {
-                console.error(err);
-            }
-            if (password == docs[0].password) {
-                return success();
-            } else {
-                return failure();
-            }
-        }); */
+        });     
         
     }
     
