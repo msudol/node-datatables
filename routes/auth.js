@@ -65,7 +65,7 @@ class Auth {
             for (var i = 0; i < docs.length; i++) {
                 self.userList.push(docs[i].userName);
             }
-            console.log("Found users doc: " + self.userList);   
+            //console.log("Found users doc: " + self.userList);   
             return callback();
         });
     }
