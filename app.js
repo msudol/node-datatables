@@ -26,6 +26,11 @@ var db = new TableManager('root', false, 'db');
 var userDb = new TableManager('root', false, 'db/users');
 // take an object insteaf of false with: var userDb = new TableManager('root', UserTables, 'db/users');
 
+// tack on an encyrption key variable to userDb - Change this to something long and complex of your own
+// MASTERKEY: the key used for encryption/decryption for this user database
+//            NOTICE! - It has to be cryptographic safe - this means randomBytes or derived by pbkdf2 (for example)
+userDb.masterKey = "NCQEq6fcAW8LTNPET6kksxiYhpCho0bv3vMc1mWH19zgMO1SxSyV9qYheaFy";
+
 // function will be sent to the table init function as a callback.
 var onRootTableInit = function (db) {
     if (processArgs.includes("logging")) {

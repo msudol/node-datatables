@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>NEDB in Datatables</title>
+        <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
+        <script type="text/javascript" src="DataTables/datatables.min.js"></script>
+        
+        <script type="text/javascript">
+            
+            // this example requires static headers 
+            $(document).ready(function() {
+                $('#example').DataTable( {
+                    "ajax": {
+                        "url":"http://localhost:3000/api/find/test4/query/%7B%7D",
+                        "dataSrc": ""
+                    },
+                    "columns": [
+                        { "data": "key" },
+                        { "data": "h" },
+                        { "data": "i" }
+                    ]
+                } );
+            });
+        </script>
+        <body>
+        
+<table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>H</th>
+                <th>I</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Key</th>
+                <th>H</th>
+                <th>I</th>
+            </tr>
+        </tfoot>
+</table>          
+            
+        </body>
+    </head>
+</html>

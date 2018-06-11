@@ -21,7 +21,7 @@ class TestManager {
 
     init(callback) {   
         var self = this;
-        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testVerifyUser];
+        self.testList = [self.testRootTableName, self.testNewSubTable1, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testNewSubTable2, self.testWriteTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testViewUser, self.testVerifyUser];
         self.runner(self.testList, 0, callback);
     }
         
@@ -61,8 +61,8 @@ class TestManager {
         self.isRunning = false;
         return;
     }
-    
-    // test list the root table docs
+
+    // test list the root table docs - repeated test
     testRootTableDocs(self) { 
         // get the root table docs
         console.log(" - Current tables managed: ");
@@ -76,7 +76,19 @@ class TestManager {
         }); 
     }
     
-    // test dropping a table
+    // test creating a new subtable test 1
+    testNewSubTable1(self) {
+        var testTable = {name: 'test1', fields: ['key', 'val', 'etc'], unique: ['key']};
+        console.log(" - Test creating table 1");
+        // test creating a new subtable
+        self.db.subTable(testTable.name, testTable, function () {
+            console.log(" - Created new subtable");
+            self.isRunning = false;
+            return;
+        })
+    }
+    
+    // test drop table test1
     testDropTable(self) {
         console.log(" - Test dropping table");
         self.db.drop("test1", function (err, numRemoved, tableName) {
@@ -90,11 +102,12 @@ class TestManager {
             return;
         });  
     }
-    
+        
+    // this should fail because the table was dropped in a previous test
     testWriteTable(self) {
         // test writing to a sub table - this should fail if this already exists since this table has a unique key set
         console.log(" - Test writing table");
-        self.db.insert("test3", {g:"hello ", h:"world", i:"!"}, function (err, newDoc) {
+        self.db.insert("test1", {key:"hello ", val:"world", etc:"!"}, function (err, newDoc) {
             if (err) {
                 console.log("- Error writing: " + err.errorType);
             } else {
@@ -105,10 +118,10 @@ class TestManager {
         });    
     }
     
-    // test creating a new subtable
-    testNewSubTable(self) {
-        var testTable = {name: 'test4', fields: ['key', 'val', 'derp'], unique: ['key']};
-        console.log(" - Test creating table");
+    // test creating a new subtable test2 
+    testNewSubTable2(self) {
+        var testTable = {name: 'test2', fields: ['key', 'val', 'etc'], unique: ['key']};
+        console.log(" - Test creating table test 2");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
             console.log(" - Created new subtable");
@@ -121,7 +134,7 @@ class TestManager {
     testNewSubTableWrite(self) {
         // test writing to a sub table
         console.log(" - Test new sub table writing")
-        self.db.insert("test4", {key:"unique", h:"testing", i:"once"}, function (err, newDoc) {
+        self.db.insert("test2", {key:"unique", val:"testing", etc:"once"}, function (err, newDoc) {
             if (err) {
                 console.log("- Error writing: " + err.errorType);
             } else {
@@ -129,7 +142,7 @@ class TestManager {
             }
             
             // try writing another to the unique key - key in this table
-            self.db.insert("test4", {key:"unique", h:"testing", i:"twice"}, function (err, newDoc) {
+            self.db.insert("test2", {key:"unique", val:"testing", etc:"twice"}, function (err, newDoc) {
                 if (err) {
                     console.log("- Error writing: " + err.errorType);
                 } else {
@@ -154,7 +167,7 @@ class TestManager {
     
     // test getting all data from a table
     testGetAllFromTable(self) {
-        var tableName = "test3";
+        var tableName = "test2";
         console.log(" - Test get all from table");
         self.db.find(tableName, {}, function (err, docs) {
             console.log(" - Current tables in : " + tableName);
@@ -174,7 +187,6 @@ class TestManager {
     // test creating the users sub table.
     testNewUserSubTable(self) {
         console.log(" - Test create new user table");
-        
         var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email","group","salt"],"unique":["userName"]};
         // test creating a new subtable
         self.userDb.subTable(testTable.name, testTable, function () {
@@ -187,47 +199,55 @@ class TestManager {
     // test creating a user
     testCreateUser(self) {
         console.log(" - Test create new users");
-        
         self.userManager.createUser("user","Test","Dummy","password","test@dummy.com","users", function(err, newDoc) {
             if (err) {
-                console.log("- Error writing: " + err.errorType);
+                console.log(" - Error writing: " + err.errorType);
             } else {
-                console.log("- Wrote data: " + JSON.stringify(newDoc));
+                console.log(" - Wrote data: " + JSON.stringify(newDoc));
             }
-            
             // create another user
             self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com","users", function(err, newDoc) {
                 if (err) {
-                    console.log("- Error writing: " + err.errorType);
+                    console.log(" - Error writing: " + err.errorType);
                 } else {
-                    console.log("- Wrote data: " + JSON.stringify(newDoc));
+                    console.log(" - Wrote data: " + JSON.stringify(newDoc));
                 }
                 self.isRunning = false;
                 return;
             }); 
-            
         });   
     }
     
     // test updating a user - this seems to duplicate the user - does NEDB clear out the old one at some point?
     testUpdateUser(self) {
         console.log(" - Test updating user info");
-
         self.userManager.updateUser("user", {firstName: "Bob", lastName: "Jones"}, function(err, numReplaced) {
             if (err) {
-                console.log("- Error writing: " + err.errorType);
+                console.log(" - Error writing: " + err.errorType);
             } else {
-                console.log("- Wrote data to # of docs : " + numReplaced);
+                console.log(" - Wrote data to # of docs : " + numReplaced);
             }
             self.isRunning = false;
             return;
         });   
     }
     
+    testViewUser(self) {
+        console.log(" - Test view user");
+        self.userManager.viewUser("user", function(err, doc) {
+            if (err) {
+                console.log(" - Error viewing user: " + err.errorType);
+            } else {
+                console.log(" - User Data : " + JSON.stringify(doc));
+            }
+            self.isRunning = false;
+            return;
+        });
+    }
+    
     // test verifying that a user is valid
     testVerifyUser(self) {
         console.log(" - Test verify user");
-        
         self.userManager.verifyUser("user", "password", function(err, isTrue) {
             if (isTrue) {
                 console.log("Yay!");

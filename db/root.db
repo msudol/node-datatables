@@ -1,2 +1,4 @@
-{"name":"test4","fields":["key","val","derp"],"unique":["key"],"_id":"gnTivzqfwNcYkGHJ"}
 {"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
+{"name":"test1","fields":["key","val","etc"],"unique":["key"],"_id":"cgbERogRHny7C6BF"}
+{"$$deleted":true,"_id":"cgbERogRHny7C6BF"}
+{"name":"test2","fields":["key","val","etc"],"unique":["key"],"_id":"0EGyFtJfq1IGjlQs"}
