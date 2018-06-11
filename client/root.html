@@ -8,7 +8,7 @@
             
             function getData(callback) {
                 $.ajax({
-                  url: "http://localhost:3000/api/dfind/test2/query/%7B%7D",
+                  url: "http://localhost:3000/api/dfind/root/query/%7B%7D",
                   success: callback
                 });
             }
@@ -16,9 +16,16 @@
             // this example gets the columns in a semi-dynamic way
             $(document).ready(function() {
                 getData(function( data ) {
+                    var columns = [];
+                    console.log(data.data[0]);
+                    //data = JSON.parse(data);
+                    columnNames = Object.keys(data.data[0]);
+                    for (var i in columnNames) {
+                        columns.push({data: columnNames[i], title: columnNames[i]});
+                    }
                     var table = $('#example').DataTable({
                         data: data.data,
-                        columns: data.columns,
+                        columns: columns,
                         dom: 'Bfrtip',
                         buttons: [
                             {
@@ -35,7 +42,7 @@
                             {   
                                 text: 'Refresh',
                                 action: function (e, dt, node, config ) {
-                                    table.ajax.url('http://localhost:3000/api/dfind/test2/query/%7B%7D').load();
+                                    table.ajax.reload();
                                 }
                             }
                         ],

@@ -50,7 +50,6 @@ class Api {
             });  
         });
         
-        
         // find
         // api/find/test4/query/{}
         this.handler.get('/find/:dbName/query/:query', function (req, res) {
@@ -62,17 +61,12 @@ class Api {
                 if (err) {
                     res.send('An error occurred!');
                 } else {
-                    //var retDocs = "";
-                    //for (var i = 0; i < docs.length; i++) {
-                    //     retDocs += " - " + JSON.stringify(docs[i]) + "<br>";
-                    //}
                     res.send(docs);
                 }
             });  
         });
         
-        //TODO: edit this find to data specifically tailored for datatables 
-        // should return a columns obj and a data obj
+        // specific find function to datatables - this needs to be changes so it should return a columns obj and a data obj
         this.handler.get('/dfind/:dbName/query/:query', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -83,12 +77,19 @@ class Api {
                     res.send('An error occurred!');
                 } else {
                     // send back a data obj
-                    var dtdocs = {data: docs};
-                    res.send(dtdocs);
+                    
+                    var columns = [];
+                    
+                    var columnNames = Object.keys(docs[0]);
+                    for (var i in columnNames) {
+                        columns.push({data: columnNames[i], title: columnNames[i]});
+                    }                    
+                    
+                    var data = docs;
+                    res.send({data: data, columns: columns});
                 }
             });  
         });
-        
         
         // insert
         // api/insert/test4/doc/{}
