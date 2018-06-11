@@ -14,10 +14,11 @@ var UserManager = require('../userManager.js');
 
 class Auth {
     
-    constructor(userDb) {
+    constructor(userDb, userTableName) {
         // auth.handler will be the middleware we use in webserver for this private route
         this.userDb = userDb;
-        this.userManager = new UserManager(this.userDb);
+        this.userTableName = userTableName;
+        this.userManager = new UserManager(this.userDb, this.userTableName);
         this.handler = router;   
         this.userList = [];
         var self = this;
@@ -60,8 +61,8 @@ class Auth {
     
     init(callback) {
         var self = this;
-        // create userlist 
-        self.userDb.find("users", {}, function(err, docs) {           
+        // find users table and initialize in memory userList
+        self.userDb.find(self.userTableName, {}, function(err, docs) {           
             for (var i = 0; i < docs.length; i++) {
                 self.userList.push(docs[i].userName);
             }

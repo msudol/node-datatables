@@ -12,8 +12,9 @@ var masterKey = '3zTvzr3p67VC61jmV54rIYu1545x4TlY';
 
 class UserManager {
     
-    constructor(userDb) {
+    constructor(userDb, tableName) {
         this.userDb = userDb;
+        this.tableName = tableName;
     }
 
     /**
@@ -75,21 +76,45 @@ class UserManager {
         return decrypted;
     }    
     
-    createUser(userName, firstName, lastName, password, email, callback) {
+    // creates a user in the user table
+    createUser(userName, firstName, lastName, password, email, group, callback) {
         var self = this;
         var enc = this.encrypt(password, masterKey);
-        var tableName = "users";
-        self.userDb.insert(tableName, {userName: userName, firstName: firstName, lastName: lastName, password: enc, email: email}, function (err, newDoc) {
+        self.userDb.insert(self.tableName, {userName: userName, firstName: firstName, lastName: lastName, password: enc, email: email, group: group}, function (err, newDoc) {
             return callback(err, newDoc);
-        });        
-        
+        });          
     }   
     
+    // TODO
+    // edit a user given username and the and opts object with what is being edited
+    updateUser(userName, opts, callback) {
+        var self = this;
+        //opts can be {firstName, lastName, password, email, group}
+        
+        // if pwd is set, encrypt and resave
+        if ((opts.password !== undefined) && (opts.password !== null)) {
+            var enc = this.encrypt(password, masterKey);
+            opts.password = enc;
+        }
+        
+        // tablename, the user, the data to update, empty object passed to db.update for options default, then callback func
+        self.userDb.update(self.tableName, {userName: userName}, {$set: opts}, {}, function(err, numReplaced) {
+            return callback(err, numReplaced);
+        })
+    }
+    
+    //TODO 
+    // view a user, will return the users details except password
+    viewUser(userName, callback) {
+        var self = this;
+        
+    }
+    
+    // verifiy a user exists
     verifyUser(userName, password, callback) {
         var self = this;
-        var tableName = "users"; 
         
-        self.userDb.find(tableName, {userName: userName}, function(err, docs) {
+        self.userDb.find(self.tableName, {userName: userName}, function(err, docs) {
             if (err) {
                 console.log("- Error finding docs");
                  return callback(err, false);

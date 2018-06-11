@@ -18,7 +18,7 @@ var processArgs = process.argv;
 //var defaultUsers = require('./tests/defaultUsers.js');
 
 // initialize an instance of TableManager, with the root table table and the tables it's going to manage.
-//adding false for the 2nd param makes the manager initiliaze from what lives in root
+// adding false for the 2nd param makes the manager initialize from what lives in root
 var db = new TableManager('root', false, 'db');
 // take an object insteaf of false with: var db = new TableManager('root', RootTables, 'db');
 
@@ -53,7 +53,7 @@ var startWebServer = function() {
 // intitialize the DBs in a chain and send a callback function that -should- run when the db is all setup.
 userDb.init(function() {
     console.log("Initializing User DB");
-    // init the datatables db's
+    // init the main datatables db's
     db.init(function () {
         onRootTableInit(db);
     }, true);

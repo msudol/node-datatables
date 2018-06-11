@@ -14,13 +14,14 @@ class TestManager {
         this.db = db;
         this.userDb = userDb;
         this.isRunning = false;
-        this.userManager = new UserManager(this.userDb);
+        // for the users table
+        this.userManager = new UserManager(this.userDb, "users");
         return this;
     }
 
     init(callback) {   
         var self = this;
-        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testVerifyUser];
+        self.testList = [self.testRootTableName, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testWriteTable, self.testNewSubTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testVerifyUser];
         self.runner(self.testList, 0, callback);
     }
         
@@ -61,6 +62,7 @@ class TestManager {
         return;
     }
     
+    // test list the root table docs
     testRootTableDocs(self) { 
         // get the root table docs
         console.log(" - Current tables managed: ");
@@ -74,6 +76,7 @@ class TestManager {
         }); 
     }
     
+    // test dropping a table
     testDropTable(self) {
         console.log(" - Test dropping table");
         self.db.drop("test1", function (err, numRemoved, tableName) {
@@ -102,6 +105,7 @@ class TestManager {
         });    
     }
     
+    // test creating a new subtable
     testNewSubTable(self) {
         var testTable = {name: 'test4', fields: ['key', 'val', 'derp'], unique: ['key']};
         console.log(" - Test creating table");
@@ -113,6 +117,7 @@ class TestManager {
         })
     }
     
+    // test writing to a new subtable
     testNewSubTableWrite(self) {
         // test writing to a sub table
         console.log(" - Test new sub table writing")
@@ -137,6 +142,7 @@ class TestManager {
         });    
     }
     
+    // test check the allowed fields in a table
     testTableAllowedFields(self) {
         console.log(" - Testing allowed fields");
         self.db.allowedFields("test2", function (err, fields) {
@@ -146,6 +152,7 @@ class TestManager {
         });
     }
     
+    // test getting all data from a table
     testGetAllFromTable(self) {
         var tableName = "test3";
         console.log(" - Test get all from table");
@@ -164,10 +171,11 @@ class TestManager {
         })
     }
     
+    // test creating the users sub table.
     testNewUserSubTable(self) {
         console.log(" - Test create new user table");
         
-        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email","salt"],"unique":["userName"]};
+        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email","group","salt"],"unique":["userName"]};
         // test creating a new subtable
         self.userDb.subTable(testTable.name, testTable, function () {
             console.log(" - Created new users subtable");
@@ -176,10 +184,11 @@ class TestManager {
         })
     }
     
+    // test creating a user
     testCreateUser(self) {
         console.log(" - Test create new users");
         
-        self.userManager.createUser("user","Test","Dummy","password","test@dummy.com", function(err, newDoc) {
+        self.userManager.createUser("user","Test","Dummy","password","test@dummy.com","users", function(err, newDoc) {
             if (err) {
                 console.log("- Error writing: " + err.errorType);
             } else {
@@ -187,7 +196,7 @@ class TestManager {
             }
             
             // create another user
-            self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com", function(err, newDoc) {
+            self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com","users", function(err, newDoc) {
                 if (err) {
                     console.log("- Error writing: " + err.errorType);
                 } else {
@@ -198,10 +207,24 @@ class TestManager {
             }); 
             
         });   
-        
-  
     }
     
+    // test updating a user - this seems to duplicate the user - does NEDB clear out the old one at some point?
+    testUpdateUser(self) {
+        console.log(" - Test updating user info");
+
+        self.userManager.updateUser("user", {firstName: "Bob", lastName: "Jones"}, function(err, numReplaced) {
+            if (err) {
+                console.log("- Error writing: " + err.errorType);
+            } else {
+                console.log("- Wrote data to # of docs : " + numReplaced);
+            }
+            self.isRunning = false;
+            return;
+        });   
+    }
+    
+    // test verifying that a user is valid
     testVerifyUser(self) {
         console.log(" - Test verify user");
         

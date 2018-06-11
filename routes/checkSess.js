@@ -1,6 +1,8 @@
 /* checkSess 
 * 
-* Check for authorization on the public routes (return session info if exists)
+* The plan with this is to know on the public routes, if a user is logged in - it's basically auth.js at this point and needs work
+*
+* TODO: Check for authorization on the public routes (return session info if exists)
 * 
 */
 "use strict";
@@ -14,10 +16,11 @@ var UserManager = require('../userManager.js');
 
 class CheckSess {
     
-    constructor(userDb) {
+    constructor(userDb, userTableName) {
         // auth.handler will be the middleware we use in webserver for this private route
         this.userDb = userDb;
-        this.userManager = new UserManager(this.userDb);
+        this.userTableName = userTableName;
+        this.userManager = new UserManager(this.userDb, this.userTableName);
         this.handler = router;   
         this.userList = [];
         var self = this;
@@ -61,7 +64,7 @@ class CheckSess {
     init(callback) {
         var self = this;
         // create userlist 
-        self.userDb.find("users", {}, function(err, docs) {           
+        self.userDb.find(self.userTableName, {}, function(err, docs) {           
             for (var i = 0; i < docs.length; i++) {
                 self.userList.push(docs[i].userName);
             } 

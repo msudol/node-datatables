@@ -12,15 +12,16 @@ var sharedSecretKey = 'simplesecret';
 var session = require('express-session');
 // can't have a webserver without express
 var express = require('express');
+// instance of express web server
 var app = express();
-
-// for encrypting at some point
+// for encrypting stored passwords
 var crypto = require('crypto');
-
 // connect the NedbStore to session
 var NedbStore = require('nedb-session-store')(session);
-
+// instance of express router for routes
 var router = express.Router();
+
+// get our routes
 var TableApi = require('./routes/tableApi');
 var Auth = require('./routes/auth');
 var CheckSess = require('./routes/checkSess');
@@ -38,8 +39,10 @@ class WebServer {
         
         // this feels bloated now
         this.tableApi = new TableApi(this.db);
-        this.auth = new Auth(this.userDb);
-        this.checkSess = new CheckSess(this.userDb);
+        
+        // send the tableName that users are stored in, in this instance of the server
+        this.auth = new Auth(this.userDb, "users");
+        this.checkSess = new CheckSess(this.userDb, "users");
         
         this.app.use(
             session({
@@ -63,7 +66,7 @@ class WebServer {
         // Create a private endpoint that requires authentication with session handling using express-session and session-nedb-store    
         this.app.use( '/client', [ this.auth.handler, express.static( __dirname + '/client' ) ] );   
         
-        // serve static files from the public folder at /   
+        // serve static files from the public folder at / and run it through the checkSess handler 
         this.app.use( [ this.checkSess.handler, express.static('public') ] );      
 
         // the api route handler - only allow the api if  authorized
@@ -82,6 +85,5 @@ class WebServer {
     }
     
 }
-
-                
+            
 module.exports = WebServer;
