@@ -19,10 +19,16 @@
         <link rel="stylesheet" href="assets/fontawesome/fontawesome-all.css" >
         
         <!-- Roboto Font  -->
-        <link href="rcss/Roboto.css">                 
+        <link href="rcss/Roboto.css">    
+        
+        <!-- Custom CSS -->
+        <link href="css/navbar-top-fixed.css">
 
         <!-- Load Datatables Javascript - should have jquery embedded -->
         <script type="text/javascript" src="DataTables/datatables.min.js"></script>
+
+        <!-- Think we need popper -->
+        <script type="text/javascript" src="rjs/popper.min.js"></script>
         
         <!-- Load the main app.js --> 
         <script type="text/javascript" src="js/app.js"></script>
@@ -31,8 +37,38 @@
         
         <body>
 
-            <table id="currentTable" class="display" style="width:100%"></table>          
- 
+            <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+              <a class="navbar-brand" href="#"><img src="/img/logo.png" height="40px;"></a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+
+            <main role="main">
+                
+                <div class="jumbotron">
+                    <h1>Welcome To NEDB Datatables</h1>
+                    <p class="lead">This is the jumbotron for this page, we may not even need it, but for now it's here as an example.</p>
+                    <a class="btn btn-lg btn-primary" href="#" role="button">Big Button &raquo;</a>
+                </div>
+                        
+                <table id="currentTable" class="display" style="width:100%"></table>        
+                
+            </main>  
+            
         </body>
     </head>
 </html>
