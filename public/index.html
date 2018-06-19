@@ -5,7 +5,7 @@
         
         <!-- Required meta tags -->
         <meta charset="utf-8">
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self' gap://ready file://* * 'unsafe-inline' 'unsafe-eval' data:;
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' file://* * 'unsafe-inline' 'unsafe-eval' data:;
 															img-src * 'unsafe-inline' 'unsafe-eval' data:;
 															style-src * 'unsafe-inline' 'unsafe-eval' data:;">	
         <meta name="format-detection" content="telephone=no">
@@ -34,22 +34,11 @@
         <script type="text/javascript" src="rjs/popper.min.js"></script>
         <script type="text/javascript" src="rjs/bootstrap.min.js"></script>
         
+        <!-- Load the app js --> 
+        <script type="text/javascript" src="js/login.js"></script>
+        
         <title>Login</title>
 
-        <script>
-          $(document).ready(function(){
-            var user,pass;
-              
-            $("body").on("submit", '#form-signin', function(event) { 
-                event.preventDefault();
-                user=$("#username").val();
-                pass=$("#password").val();
-                $.post("http://localhost:3000/client/login", {username: user,password: pass}, function(data){
-                    alert(data);
-                });
-            });
-          });
-        </script>
     </head>
     <body>
 

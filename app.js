@@ -1,18 +1,13 @@
 /* app.js */
 "use strict";
-
 // import TableManager class 
 var TableManager = require('./tableManager.js');
-
 // import TestManager Class
 var TestManager = require('./testManager.js');
-
 // import WebServer Class
 var WebServer = require('./webServer.js');
-
 // get command line args
 var processArgs = process.argv;
-
 //var RootTables = require('./tests/tables.js');
 //var UserTables = require('./tests/users.js');
 //var defaultUsers = require('./tests/defaultUsers.js');
@@ -22,9 +17,9 @@ var processArgs = process.argv;
 var db = new TableManager('root', false, 'db');
 // take an object insteaf of false with: var db = new TableManager('root', RootTables, 'db');
 
-// init the userDB - we can add false to not user the test table above at some point
+// init the userDB - we can add false to not use the test table above 
+// take an object instead of false with: var userDb = new TableManager('root', UserTables, 'db/users');
 var userDb = new TableManager('root', false, 'db/users');
-// take an object insteaf of false with: var userDb = new TableManager('root', UserTables, 'db/users');
 
 // tack on an encyrption key variable to userDb - Change this to something long and complex of your own
 // MASTERKEY: the key used for encryption/decryption for this user database
@@ -53,7 +48,7 @@ var startWebServer = function() {
     // setup instance of an express web server for this DB.
     var ws = new WebServer("3000", db, userDb);
     ws.init();
-}
+};
 
 // intitialize the DBs in a chain and send a callback function that -should- run when the db is all setup.
 userDb.init(function() {

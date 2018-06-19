@@ -1,5 +1,5 @@
 {"key":"lala","val":"testing","etc":"thrice","_id":"7ZxVikAhghxFW1jh"}
 {"key":"unique","val":"testing","etc":"once","_id":"9oiHa2PpG8Bxt4Rd"}
-{"$$indexCreated":{"fieldName":"key","unique":true,"sparse":false}}
 {"key":"goodbye","val":"universe","etc":"!","_id":"IXxPu3VH6r1470WP"}
 {"key":"ask","val":"question","etc":" ?","_id":"UWWpB8AFpjawVFRA"}
+{"$$indexCreated":{"fieldName":"key","unique":true,"sparse":false}}

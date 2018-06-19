@@ -1,58 +1,40 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <title>NEDB in Datatables</title>
-        <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
+        
+        <!-- meta tags -->
+        <meta charset="utf-8">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' file://* * 'unsafe-inline' 'unsafe-eval' data:;
+															img-src * 'unsafe-inline' 'unsafe-eval' data:;
+															style-src * 'unsafe-inline' 'unsafe-eval' data:;">	
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <meta http-equiv="Access-Control-Allow-Origin" content="*">                
+                     
+        <!-- Load datatables CSS - should have bootstrap embedded -->        
+        <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css" />
+
+        <!-- Font Awesome 4.0 CSS -->
+        <link rel="stylesheet" href="assets/fontawesome/fontawesome-all.css" >
+        
+        <!-- Roboto Font  -->
+        <link href="rcss/Roboto.css">                 
+
+        <!-- Load Datatables Javascript - should have jquery embedded -->
         <script type="text/javascript" src="DataTables/datatables.min.js"></script>
         
-        <script type="text/javascript">
-            
-            function getData(callback) {
-                $.ajax({
-                  url: "http://localhost:3000/api/dfind/test2/query/%7B%7D",
-                  success: callback
-                });
-            }
-            
-            // this example gets the columns in a semi-dynamic way
-            $(document).ready(function() {
-                getData(function( data ) {
-                    var table = $('#example').DataTable({
-                        data: data.data,
-                        columns: data.columns,
-                        dom: 'Bfrtip',
-                        buttons: [
-                            {
-                                extend: 'selectedSingle',
-                                text: 'Log selected data',
-                                action: function ( e, dt, button, config ) {
-                                    console.log( dt.row( { selected: true } ).data() );
-                                }
-                            },
-                            {
-                                extend: 'selectNone',
-                                text: 'Deselect'
-                            },
-                            {   
-                                text: 'Refresh',
-                                action: function (e, dt, node, config ) {
-                                    table.ajax.url('http://localhost:3000/api/dfind/test2/query/%7B%7D').load();
-                                }
-                            }
-                        ],
-                        select: {
-                            style: "single",
-                            items: "row",
-                            blurable: true
-                        }                   
-                    });
-                });
-            });
-        </script>
-        <body>
+        <!-- Load the main app.js --> 
+        <script type="text/javascript" src="js/app.js"></script>
         
-            <table id="example" class="display" style="width:100%">
-            </table>          
+        <title>NEDB in Datatables</title>
+        
+        <body>
             
+
+        <table id="currentTable" class="display" style="width:100%"></table>          
+ 
+
         </body>
     </head>
 </html>
