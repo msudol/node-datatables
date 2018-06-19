@@ -11,7 +11,7 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <meta http-equiv="Access-Control-Allow-Origin" content="*">                
-                     
+                           
         <!-- Load datatables CSS - should have bootstrap embedded -->        
         <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css" />
 
@@ -36,21 +36,21 @@
         <title>NEDB in Datatables</title>
         
         <body>
-
+            
             <header id="navHeader"></header>
 
             <main role="main" id="main">
                 
                 <div class="app_main">
-                
-                    <div class="jumbotron">
-                        <h1>Welcome To NEDB Datatables</h1>
-                        <p class="lead">This is the jumbotron for this page, we may not even need it, but for now it's here as an example.</p>
-                        <a class="btn btn-lg btn-primary" href="#" role="button">Big Button &raquo;</a>
+
+                    <div>
+                        <h1>Tables</h1>
                     </div>
 
-                </div>  
-                        
+                    <table id="currentTable" class="display loadTable" style="width:100%" data-load="root"></table>        
+                
+                </div>
+                
             </main>  
             
         </body>
