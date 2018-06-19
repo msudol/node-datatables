@@ -42,26 +42,30 @@
     </head>
     <body>
 
-    <div class="d-flex justify-content-center">
-        <img src="img/logo.png">
-    </div>
-    
-    <!-- Login form handler watches for submission on the ID: form-signin -->
-    <form id="form-signin" class="form-signin" action="#">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="userName" class="sr-only">Username</label>
-        <input type="test" id="username" class="form-control" placeholder="Username" required autofocus>
-        <br>
-        <label for="password" class="sr-only">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="Password" required>
-        <div class="checkbox">
-        <label>
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
+        <div class="d-flex justify-content-center">
+            <img src="img/logo.png">
         </div>
-        <button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
-      
+
+        <!-- Login form handler watches for submission on the ID: form-signin -->
+        <form id="form-signin" class="form-signin" action="#">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <label for="userName" class="sr-only">Username</label>
+            <input type="test" id="username" class="form-control" placeholder="Username" required autofocus>
+            <br>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Password" required>
+            <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+            </div>
+            <button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            
+            <div id="loginStatus" class="loginStatus"></div>
+            
+        </form>
+
+        
     </body>
     
 </html>

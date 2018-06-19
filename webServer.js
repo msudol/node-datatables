@@ -52,8 +52,7 @@ class WebServer {
                 cookie: {
                     path: '/',
                     httpOnly: true,
-                    //maxAge: 365 * 24 * 60 * 60 * 1000   // e.g. 1 year
-                    maxAge: 24 * 60 * 60 * 1000,   // e.g. 1 year
+                    maxAge: 24 * 60 * 60 * 1000,   //maxAge: 365 * 24 * 60 * 60 * 1000   // e.g. 1 year
                     secure: false,        // set to true to ensure only usable over https
                     ephemeral: true     // deletes cookie when browser is closed        
                 },
