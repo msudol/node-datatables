@@ -18,7 +18,7 @@ App.prototype.loadMenu = function (selector, url, callback) {
 // load table of tableName into selector 
 App.prototype.loadTable = function (selector, tableName) {
     var self = this;
-    
+    this.activeSelector = selector;
     var currentTable = $(selector);
     var currentUrl = 'http://localhost:3000/api/dfind/' + tableName + '/query/%7B%7D';
     
@@ -79,11 +79,15 @@ App.prototype.loadTable = function (selector, tableName) {
 };
 
 App.prototype.action = function (action, args) {
-    
+    var self = this;
     switch (action) {
         case "showTables":
             this.mainDiv.hide();
             this.tableDiv.show();  
+            if (args) {
+                self.activeTable.destroy();
+                self.loadTable(self.activeSelector, args);
+            }
             break;
         default: 
             console.log("Action with no values");     
@@ -121,7 +125,9 @@ $(document).ready(function () {
             return;
         } else {
             //console.log($(this).data("action"));
-            app.action($(this).data("action"));
+            var action = $(this).data("action");
+            var args = $(this).data("args")
+            app.action(action, args);
         }
     });
     
