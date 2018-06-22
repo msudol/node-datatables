@@ -1,2 +1,3 @@
 {"name":"test2","fields":["key","val","etc"],"unique":["key"],"_id":"0EGyFtJfq1IGjlQs"}
+{"name":"test5","fields":["time","temp"],"_id":"buzpnlS6JpbcdtuQ"}
 {"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}

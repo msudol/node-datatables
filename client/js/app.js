@@ -39,7 +39,7 @@ $(document).ready(function () {
             //data = JSON.parse(data);
             columnNames = Object.keys(data.data[0]);
             for (var i in columnNames) {
-                columns.push({data: columnNames[i], title: columnNames[i]});
+                columns.push({data: columnNames[i], title: columnNames[i], defaultContent: "<i>Not set</i>"});
             }
             var table = $('#currentTable').DataTable({
                 data: data.data,
