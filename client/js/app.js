@@ -16,16 +16,23 @@ App.prototype.loadMenu = function (selector, url, callback) {
 };
 
 // load table of tableName into selector 
-App.prototype.loadTable = function (selector, tableName) {
+App.prototype.loadTable = function (selector, tableName, tableDesc) {
     var self = this;
     this.activeSelector = selector;
     var currentTable = $(selector);
     var currentUrl = 'http://localhost:3000/api/dfind/' + tableName + '/query/%7B%7D';
     
+    var tableTitle = tableDesc || tableName;
+    if (tableTitle == "root") {
+        tableTitle = "Available Tables";
+    }
+    $("#tableName").html(tableTitle);
+    
     if (currentTable) {
         self.getData(currentUrl, function (data) {
-            //console.log(data);
+            console.log(data);
             var columns = [];
+            
             var columnNames = Object.keys(data.data[0]);
             for (var i in columnNames) {
                 columns.push({data: columnNames[i], title: columnNames[i], defaultContent: "<i>Not set</i>"});
@@ -35,11 +42,14 @@ App.prototype.loadTable = function (selector, tableName) {
                 data: data.data,
                 columns: columns,
                 dom: 'Bfrtip',
+                "language": {
+                  "emptyTable": "No data available in table"
+                }  ,              
                 select: {
                     style: "single",
                     items: "row",
                     blurable: true
-                }                   
+                }
             });
             // set the url for this table
             self.activeTable.ajax.url(currentUrl);
@@ -63,8 +73,9 @@ App.prototype.loadTable = function (selector, tableName) {
                     action: function ( e, dt, button, config ) {
                         var tableRow = dt.row( { selected: true } ).data();
                         self.activeTable.destroy();
-                        console.log(tableRow.name); 
-                        self.loadTable(selector, tableRow.name);
+                        console.log(tableRow.name + " - " + tableRow.desc); 
+                        $(self.activeSelector).html("");
+                        self.loadTable(selector, tableRow.name, tableRow.desc);
                     }
                 });  
             }
@@ -72,8 +83,7 @@ App.prototype.loadTable = function (selector, tableName) {
             /*table.button().add(1, {
                 extend: 'selectNone',
                 text: 'Deselect'
-            });      */        
-            
+            });      */         
         });     
     }    
 };
@@ -86,6 +96,7 @@ App.prototype.action = function (action, args) {
             this.tableDiv.show();  
             if (args) {
                 self.activeTable.destroy();
+                $(self.activeSelector).html("");
                 self.loadTable(self.activeSelector, args);
             }
             break;
@@ -135,6 +146,6 @@ $(document).ready(function () {
     app.tableDiv.hide();
     
     // load the root table
-    app.loadTable("#currentTable", "root");
+    app.loadTable("#currentTable", "root", "Available Tables");
 
 });
