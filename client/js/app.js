@@ -23,7 +23,7 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
     var currentUrl = 'http://localhost:3000/api/dfind/' + tableName + '/query/%7B%7D';
     
     var tableTitle = tableDesc || tableName;
-    if (tableTitle == "root") {
+    if (tableTitle === "root") {
         tableTitle = "Available Tables";
     }
     $("#tableName").html(tableTitle);
@@ -67,7 +67,7 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
             });
             
             if (tableName == "root") {
-            self.activeTable.button().add(1, {
+                self.activeTable.button().add(1, {
                     extend: 'selectedSingle',
                     text: 'Open Selected Table',
                     action: function ( e, dt, button, config ) {
@@ -78,6 +78,16 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                         self.loadTable(selector, tableRow.name, tableRow.desc);
                     }
                 });  
+            }
+            
+            if (tableName != "root") {
+                self.activeTable.button().add(0, {
+                    action: function (e, dt, button, config) {
+                        console.log("Table Name: " + tableName + "  Fields: " + columnNames);
+                        
+                    },
+                    text: 'Add Row'
+                }); 
             }
             
             /*table.button().add(1, {
