@@ -32,7 +32,7 @@ class Api {
         });
 
         // create subtable
-        // api/create/{"name":"test5","fields":["time","temp"]}
+        // api/create/{"name":"test5","desc":"A description",fields":["time","temp"]}
         this.handler.get('/create/:table', function (req, res) {
             console.log(req.params);
             var table = JSON.parse(req.params.table);

@@ -35,28 +35,29 @@ var onRootTableInit = function (db) {
     if (processArgs.includes("runtests")) {
         var initTest = new TestManager(db, userDb);
         // run the tests and when done callback
-        initTest.init(function() {
+        initTest.init(function () {
             return startWebServer();
         });
-    } else {    
+    } else {
         return startWebServer();
     }
 };
 
 // Start the webserver on a callback from the last database initialized during startup
-var startWebServer = function() {
+var startWebServer = function () {
     // setup instance of an express web server for this DB.
     var ws = new WebServer("3000", db, userDb);
     ws.init();
 };
 
 // intitialize the DBs in a chain and send a callback function that -should- run when the db is all setup.
-userDb.init(function() {
+userDb.init(function () {
     console.log("Initializing User DB");
     // init the main datatables db's
     db.init(function () {
         onRootTableInit(db);
     }, true);
+    
     
     /* insert user from tests for now
     userDb.insert("users", defaultUsers[0], function (err, newDoc) {
@@ -66,5 +67,5 @@ userDb.init(function() {
             console.log("- Wrote default user: " + JSON.stringify(newDoc));
         }
     }); 
-    */    
+    */
 }, true);

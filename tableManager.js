@@ -110,7 +110,6 @@ class TableManager {
     subTable(tableName, tableObj, callback) {  
         var self = this;
         var tableName = tableName;
-        var tableObj = tableObj;
         var callback = callback;
         
         // inspect the root table
@@ -274,7 +273,6 @@ class TableManager {
             return callback(err, docs[0].fields);
         });  
     }
-    
     
 }
 

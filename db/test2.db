@@ -1,6 +1,2 @@
-{"key":"lala","val":"testing","etc":"thrice","_id":"7ZxVikAhghxFW1jh"}
-{"key":"unique","val":"testing","etc":"once","_id":"9oiHa2PpG8Bxt4Rd"}
-{"key":"goodbye","val":"universe","etc":"!","_id":"IXxPu3VH6r1470WP"}
-{"key":"ask","val":"question","etc":" ?","_id":"UWWpB8AFpjawVFRA"}
-{"key":"testing","val":"testing","etc":"thrice","_id":"yewsGXfJhUO9Ehvs"}
 {"$$indexCreated":{"fieldName":"key","unique":true,"sparse":false}}
+{"key":"unique","val":"testing","etc":"once","_id":"crY4EKb3C7MHQ2rP"}

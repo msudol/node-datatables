@@ -78,7 +78,7 @@ class TestManager {
     
     // test creating a new subtable test 1
     testNewSubTable1(self) {
-        var testTable = {name: 'test1', fields: ['key', 'val', 'etc'], unique: ['key']};
+        var testTable = {name: 'test1', desc: 'Just a test', fields: ['key', 'val', 'etc'], unique: ['key']};
         console.log(" - Test creating table 1");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
@@ -120,7 +120,7 @@ class TestManager {
     
     // test creating a new subtable test2 
     testNewSubTable2(self) {
-        var testTable = {name: 'test2', fields: ['key', 'val', 'etc'], unique: ['key']};
+        var testTable = {name: 'test2', desc: 'Another test table', fields: ['key', 'val', 'etc'], unique: ['key']};
         console.log(" - Test creating table test 2");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
