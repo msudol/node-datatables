@@ -28,35 +28,38 @@ App.prototype.loadTable = function (selector, tableName) {
             for (var i in columnNames) {
                 columns.push({data: columnNames[i], title: columnNames[i], defaultContent: "<i>Not set</i>"});
             }
+            // init table
             var table = $(selector).DataTable({
                 data: data.data,
                 columns: columns,
                 dom: 'Bfrtip',
-                buttons: [
-                    {
-                        extend: 'selectedSingle',
-                        text: 'Log selected data',
-                        action: function ( e, dt, button, config ) {
-                            console.log( dt.row( { selected: true } ).data() );
-                        }
-                    },
-                    {
-                        extend: 'selectNone',
-                        text: 'Deselect'
-                    },
-                    {   
-                        text: 'Refresh',
-                        action: function (e, dt, node, config ) {
-                            table.ajax.reload();
-                        }
-                    }
-                ],
                 select: {
                     style: "single",
                     items: "row",
                     blurable: true
                 }                   
             });
+            // programmatically add buttons based on things
+            table.button().add(0, {
+                action: function (e, dt, button, config) {
+                    dt.ajax.reload();
+                },
+                text: 'Refresh'
+            });
+            
+            table.button().add(1, {
+                extend: 'selectedSingle',
+                text: 'Log selected data',
+                action: function ( e, dt, button, config ) {
+                    console.log( dt.row( { selected: true } ).data() );
+                }
+            });  
+            
+            table.button().add(1, {
+                extend: 'selectNone',
+                text: 'Deselect'
+            });              
+            
         });     
     }    
 };
