@@ -10,30 +10,17 @@ App.prototype.getData = function (url, callback) {
     });
 };
 
-App.prototype.loadMenu = function (loc, url, callback) {
-    $(loc).load(url, callback);
+// loadMenu into selector (jquery)
+App.prototype.loadMenu = function (selector, url, callback) {
+    $(selector).load(url, callback);
 };
 
-// this example gets the columns in a semi-dynamic way
-$(document).ready(function () {
-     
-    app = new App();
+// load table of tableName into selector 
+App.prototype.loadTable = function (selector, tableName) {
     
-    var main = $("#main");
-    
-    app.loadMenu("#navHeader", "menu/menu.html", function() {
-        // inspect the newly loaded menu to make it active
-        var el = $("#nav_header");
-        console.log("Menu loaded");
-    });
-    
-    
-    var currentTable = $("#currentTable");
-    
+    var currentTable = $(selector);
     if (currentTable) {
-        var load = currentTable.data("load");
-        console.log(load);
-        app.getData("http://localhost:3000/api/dfind/" + load + "/query/%7B%7D", function ( data ) {
+        app.getData("http://localhost:3000/api/dfind/" + tableName + "/query/%7B%7D", function (data) {
             var columns = [];
             console.log(data.data[0]);
             //data = JSON.parse(data);
@@ -41,7 +28,7 @@ $(document).ready(function () {
             for (var i in columnNames) {
                 columns.push({data: columnNames[i], title: columnNames[i], defaultContent: "<i>Not set</i>"});
             }
-            var table = $('#currentTable').DataTable({
+            var table = $(selector).DataTable({
                 data: data.data,
                 columns: columns,
                 dom: 'Bfrtip',
@@ -70,9 +57,61 @@ $(document).ready(function () {
                     blurable: true
                 }                   
             });
-        });
-            
+        });     
+    }    
+};
+
+App.prototype.action = function (action, args) {
+    
+    switch (action) {
+        case "showTables":
+            this.mainDiv.hide();
+            this.tableDiv.show();  
+            break;
+        default: 
+            console.log("Action with no values");     
     }
     
+};
+
+App.prototype.toggleView = function (on, off) {
+    this.mainDiv.toggle();
+    this.tableDiv.toggle();  
+};
+
+App.prototype.defineDivs = function (main, tables) {
+    this.mainDiv = $(main);
+    this.tableDiv = $(tables);
+};
+
+// When the page loads, initialize things
+$(document).ready(function () {
+     
+    app = new App();
+    
+    app.loadMenu("#navHeader", "menu/menu.html", function() {
+        // inspect the newly loaded menu to make it active
+        var el = $("#nav_header");
+        console.log("Menu loaded");
+    });
+    
+    app.defineDivs("#app_main", "#app_tables");
+    
+    // action watcher
+    $("#app_body").on("click", '.action', function (event) {
+        event.preventDefault();
+        if ($(this).hasClass("disabled")) {
+            return;
+        } else {
+            console.log($(this).data("action"));
+            app.action($(this).data("action"));
+        }
+    });
+    
+    app.mainDiv.show();
+    app.tableDiv.hide();
+    
+    // load the root table
+    app.loadTable("#currentTable", "root");
 
 });

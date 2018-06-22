@@ -35,24 +35,34 @@
         
         <title>NEDB in Datatables</title>
         
-        <body>
+        <body id="app_body">
 
             <header id="navHeader"></header>
 
             <main role="main" id="main">
                 
-                <div class="app_main">
+                <div id="app_main" class="app_main">
                 
                     <div class="jumbotron">
                         <h1>Welcome To NEDB Datatables</h1>
                         <p class="lead">An application designed to manage and use datatables, powered by Node.js and NEDB.</p>
-                        <a class="btn btn-lg btn-primary" href="tables.html" role="button">Show Tables &raquo;</a>
+                        <a class="btn btn-lg btn-primary action" data-action="showTables" href="#" role="button">Show Tables &raquo;</a>
                     </div>
 
                 </div>  
+ 
+                <div id="app_tables" class="app_tables">
+                
+                    <div class="container-fluid">
                         
+                        <h1 id="tableName">Available Tables</h1>
+   
+                        <table id="currentTable" class="display loadTable" style="width:100%"></table>   
+                    
+                    </div>
+                </div>   
+                
             </main>  
-            
         </body>
     </head>
 </html>
