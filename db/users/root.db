@@ -1,0 +1,2 @@
+{"name":"users","fields":["userName","firstName","lastName","password","email","group","salt"],"unique":["userName"],"group":["admins"],"_id":"FKKym2TNu37VchsX"}
+{"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}

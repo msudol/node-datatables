@@ -16,11 +16,12 @@ var UserManager = require('../userManager.js');
 
 class CheckSess {
     
-    constructor(userDb, userTableName) {
+    constructor(db, userDb, userTableName) {
         // auth.handler will be the middleware we use in webserver for this private route
+        this.db = db;
         this.userDb = userDb;
         this.userTableName = userTableName;
-        this.userManager = new UserManager(this.userDb, this.userTableName);
+        this.userManager = new UserManager(this.db, this.userDb, this.userTableName);
         this.handler = router;   
         this.userList = [];
         var self = this;
@@ -120,6 +121,8 @@ class CheckSess {
             // check the session for the value loggedIn 
             if (req.session && self.isValidUser(req.session.user) && req.session.loggedIn) {
                 // do something for valid users
+                // we could query the user table here and deliver more info to the session
+                //TODO: send more info to the browser
                 next();
             } else {
                 // do something for anon users

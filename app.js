@@ -8,17 +8,12 @@ var TestManager = require('./testManager.js');
 var WebServer = require('./webServer.js');
 // get command line args
 var processArgs = process.argv;
-//var RootTables = require('./tests/tables.js');
-//var UserTables = require('./tests/users.js');
-//var defaultUsers = require('./tests/defaultUsers.js');
 
 // initialize an instance of TableManager, with the root table table and the tables it's going to manage.
-// adding false for the 2nd param makes the manager initialize from what lives in root
+// adding false for the 2nd param makes the manager initialize from what already lives in the directory
 var db = new TableManager('root', false, 'db');
-// take an object insteaf of false with: var db = new TableManager('root', RootTables, 'db');
 
 // init the userDB - we can add false to not use the test table above 
-// take an object instead of false with: var userDb = new TableManager('root', UserTables, 'db/users');
 var userDb = new TableManager('root', false, 'db/users');
 
 // tack on an encyrption key variable to userDb - Change this to something long and complex of your own
@@ -57,15 +52,4 @@ userDb.init(function () {
     db.init(function () {
         onRootTableInit(db);
     }, true);
-    
-    
-    /* insert user from tests for now
-    userDb.insert("users", defaultUsers[0], function (err, newDoc) {
-        if (err) {
-            console.log("- Error writing default user: " + err.errorType);
-        } else {
-            console.log("- Wrote default user: " + JSON.stringify(newDoc));
-        }
-    }); 
-    */
 }, true);

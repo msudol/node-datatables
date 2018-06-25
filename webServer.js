@@ -41,8 +41,8 @@ class WebServer {
         this.tableApi = new TableApi(this.db);
         
         // send the tableName that users are stored in, in this instance of the server
-        this.auth = new Auth(this.userDb, "users");
-        this.checkSess = new CheckSess(this.userDb, "users");
+        this.auth = new Auth(this.db, this.userDb, "users");
+        this.checkSess = new CheckSess(this.db, this.userDb, "users");
         
         this.app.use(
             session({

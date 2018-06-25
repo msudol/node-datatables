@@ -14,11 +14,12 @@ var UserManager = require('../userManager.js');
 
 class Auth {
     
-    constructor(userDb, userTableName) {
+    constructor(db, userDb, userTableName) {
         // auth.handler will be the middleware we use in webserver for this private route
+        this.db = db;
         this.userDb = userDb;
         this.userTableName = userTableName;
-        this.userManager = new UserManager(this.userDb, this.userTableName);
+        this.userManager = new UserManager(this.db, this.userDb, this.userTableName);
         this.handler = router;   
         this.userList = [];
         var self = this;
@@ -118,6 +119,8 @@ class Auth {
         self.handler.use(function(req, res, next) {
             // check the session for the value loggedIn 
             if (req.session && self.isValidUser(req.session.user) && req.session.loggedIn) {
+                // we could query the user table here and deliver more info to the session
+                //TODO: send more info to the browser
                 return next();
             } else {
                 // could return a location instead of a 401

@@ -12,6 +12,14 @@ var fs = require('fs');
 
 class TableManager {
     
+    /**
+     * Constructor
+     * @param   {string} rootName name of root the table
+     * @param   {object} tables   object containing tables to initialize, set to false to initialize from the filesystem
+     * @param   {string} path     path of the table
+     * @param   {string} type     nedd
+     * @returns {object} Reference to this.
+     */
     constructor(rootName, tables, path, type) {
         this.rootName = rootName;
         this.tables = tables;
@@ -228,7 +236,6 @@ class TableManager {
         }
         
         this.db[tableName].insert(data, function(err, newDoc) {
-
             if (err) {
                if (err.errorType == "uniqueViolated") {
                     console.error(err.errorType);
@@ -266,6 +273,7 @@ class TableManager {
     }
     
     // assumes tablename is going to be unique from setting indexing and returns the fields key.
+    // TODO: implement this in someway
     allowedFields(tableName, callback) {
         var self = this;
         var tableName = tableName;

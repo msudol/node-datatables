@@ -12,7 +12,15 @@ var _crypto = require('crypto');
 
 class UserManager {
     
-    constructor(userDb, tableName) {
+    /**
+     * Initialize a session of user manager
+     * @param   {object} db        the root table this instance is managing
+     * @param   {object} userDb    the userDb table this instance is managing
+     * @param   {string} tableName the table name
+     * @returns {[[Type]]} [[Description]]
+     */
+    constructor(db, userDb, tableName) {
+        this.db = db;
         this.userDb = userDb;
         this.tableName = tableName;
         this.masterKey = userDb.masterKey;
@@ -25,9 +33,9 @@ class UserManager {
 
     /**
      * Encrypts text by given key
-     * @param String text to encrypt
-     * @param Buffer masterkey
-     * @returns String encrypted text, base64 encoded
+     * @param   {String} text       string that needs encrypting
+     * @param   {Buffer} masterkey  a master key
+     * @returns {String} encrypted text, base64 encoded
      */
     encrypt(text, masterkey){
         // random initialization vector
@@ -50,8 +58,8 @@ class UserManager {
     /**
      * Decrypts text by given key
      * @param   {String} encdata   base64 encoded input data
-     * @param   {Buffer} masterkey  master key
-     * @returns String   decrypted (original) text
+     * @param   {Buffer} masterkey master key
+     * @returns {String} decrypted (original) text
      */
     decrypt(encdata, masterkey){
         // base64 decoding
@@ -73,21 +81,22 @@ class UserManager {
     
     /**
      * Create a new user in the users table
-     * @param   {string} userName  A unique username
-     * @param   {string} firstName First Name
-     * @param   {string} lastName  Last Name
-     * @param   {string} password  Password
-     * @param   {string} email     Email Address
-     * @param   {Array} group     Array of groups user belongs to
+     * @param   {string}   userName  A unique username
+     * @param   {string}   firstName First Name
+     * @param   {string}   lastName  Last Name
+     * @param   {string}   password  Password
+     * @param   {string}   email     Email Address
+     * @param   {Object}   group     Groups user belongs to
+     * @param   {Object}   settings  User settings object                          
      * @param   {function} callback  Callback function
      * @returns {function} callback
      */
-    createUser(userName, firstName, lastName, password, email, group, callback) {
+    createUser(userName, firstName, lastName, password, email, group, settings, callback) {
         var self = this;
         // make sure group is an array
         group = group instanceof Array ? group : [group];
         var enc = this.encrypt(password, self.masterKey);
-        self.userDb.insert(self.tableName, {userName: userName, firstName: firstName, lastName: lastName, password: enc, email: email, group: group}, function (err, newDoc) {
+        self.userDb.insert(self.tableName, {userName: userName, firstName: firstName, lastName: lastName, password: enc, email: email, group: group, settings: settings}, function (err, newDoc) {
             return callback(err, newDoc);
         });          
     }   
@@ -96,7 +105,7 @@ class UserManager {
     // edit a user given username and the and opts object with what is being edited
     updateUser(userName, opts, callback) {
         var self = this;
-        //opts can be {firstName, lastName, password, email, group}
+        //opts can be {firstName, lastName, password, email, group, settings}
         
         // if pwd is set, encrypt and resave
         if ((opts.password !== undefined) && (opts.password !== null)) {
@@ -107,7 +116,7 @@ class UserManager {
         // tablename, the user, the data to update, empty object passed to db.update for options default, then callback func
         self.userDb.update(self.tableName, {userName: userName}, {$set: opts}, {}, function(err, numReplaced) {
             return callback(err, numReplaced);
-        })
+        });
     }
     
     // view a user, will return the users details except password
@@ -118,8 +127,8 @@ class UserManager {
             if (err) {
                 console.log("- Error finding docs");
                 return callback(err, false);
-            }
-            else {
+            } else {
+                // TODO - strip out password
                 return callback(err, docs[0]);
             }
         });
@@ -133,18 +142,53 @@ class UserManager {
             if (err) {
                 console.log("- Error finding docs");
                  return callback(err, false);
-            }
-            else {
+            } else {
                 if (password == self.decrypt(docs[0].password, self.masterKey)) {
                     console.log("Password verified");
                     return callback(err, true);
-                }
-                else {
+                } else {
                     console.log("Password failed");
                     return callback(err, false);
                 }
             }
-        }) 
+        });
+    }
+    
+    // allowed access returns access allowed for a given user based on the rootTable
+    // should return an object containing query: true, insert: true, update: true, remove: true
+    allowedAccess(userName, targetTable, callback) {
+        var self = this;
+        
+        // we don't care about target table at this moment.
+        var targetTable = targetTable;
+        
+        self.userDb.find(self.tableName, {userName: userName}, function(err, docs) {
+            if (err) {
+                console.log("- Error finding docs");
+                 return callback(err, docs);
+            } else {
+                //get this users group membersip from docs[0]
+                var groups = docs[0].group;
+                var settings = docs[0].settings;
+                // http://localhost:3000/api/find/root/query/{"$and":[{"group.users":{"$exists":true}},{"group.admins":{"$exists":true}}]}
+                // http://localhost:3000/api/find/root/query/{"$or":[{"group.users.query":true},{"group.admins.query":true}]}
+                var query = [];
+                
+                for (var i = 0; i < groups.length; i++) { 
+                    var str = '{"group.'+groups[i]+'.query":true}';
+                    query.push(JSON.parse(str));
+                }
+
+                self.db.find(self.db.rootName, {$or:query}, function(err, docs) {
+                    if (err) {
+                        return callback(err, docs);
+                        return err;
+                    } 
+                    console.log(docs); 
+                    return callback(err, docs);
+                });
+            }
+        });         
     }
     
 }

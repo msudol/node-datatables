@@ -15,13 +15,13 @@ class TestManager {
         this.userDb = userDb;
         this.isRunning = false;
         // for the users table
-        this.userManager = new UserManager(this.userDb, "users");
+        this.userManager = new UserManager(this.db, this.userDb, "users");
         return this;
     }
 
     init(callback) {   
         var self = this;
-        self.testList = [self.testRootTableName, self.testNewSubTable1, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testNewSubTable2, self.testNewSubTable3, self.testWriteTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testViewUser, self.testVerifyUser];
+        self.testList = [self.testRootTableName, self.testNewSubTable1, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testNewSubTable2, self.testNewSubTable3, self.testWriteTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testViewUser, self.testVerifyUser, self.testAllowedAccess];
         self.runner(self.testList, 0, callback);
     }
         
@@ -262,26 +262,33 @@ class TestManager {
     // test creating a user
     testCreateUser(self) {
         console.log(" - Test create new users");
-        self.userManager.createUser("user","Test","Dummy","password","test@dummy.com",['users'], function(err, newDoc) {
+        self.userManager.createUser("user","Test","Dummy","password","test@dummy.com",['users'], {}, function(err, newDoc) {
+            console.log("Creating user 1");
             if (err) {
                 console.log(" - Error writing: " + err.errorType);
             } else {
                 console.log(" - Wrote data: " + JSON.stringify(newDoc));
             }
-            // create another user
-            self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com",['users'], function(err, newDoc) {
+            
+            // create another user in the callback
+            self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com",['users'], {}, function(err, newDoc) {
+                console.log("Creating user 2");
                 if (err) {
                     console.log(" - Error writing: " + err.errorType);
                 } else {
                     console.log(" - Wrote data: " + JSON.stringify(newDoc));
                 }
-                // create an admin user
-                self.userManager.createUser("admin","Test","Dummy","password","test@dummy.com",['users','admins'], function(err, newDoc) {
+                
+                // create an admin user in the callback
+                self.userManager.createUser("admin","Test","Dummy","password","test@dummy.com",['users','admins'], {}, function(err, newDoc) {
+                    console.log("Creating user 3");
                     if (err) {
                         console.log(" - Error writing: " + err.errorType);
                     } else {
                         console.log(" - Wrote data: " + JSON.stringify(newDoc));
                     }
+                    
+                    //end test
                     self.isRunning = false;
                     return;
                 }); 
@@ -325,11 +332,25 @@ class TestManager {
             } else {
                 console.log("Bah.");
             }
-            
             self.isRunning = false;
             return;            
         });
     }
+    
+    // test the users access against a particule table
+    testAllowedAccess(self) {
+        console.log(" - Test allowed access");
+        self.userManager.allowedAccess("user", "test2", function(err, docs) {
+            if (err) {
+                console.log(" - Error viewing user: " + err.errorType);
+            } else {
+                console.log(" - User Data : " + JSON.stringify(docs));
+            }
+            // end test
+            self.isRunning = false;
+            return;            
+        });
+    }    
 }
 
 module.exports = TestManager;
