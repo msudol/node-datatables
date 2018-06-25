@@ -33,6 +33,7 @@ class Api {
 
         // create subtable
         // api/create/{"name":"test5","desc":"A description",fields":["time","temp"]}
+        // TODO: check api user "group" permission to find out if they are allowed to create
         this.handler.get('/create/:table', function (req, res) {
             console.log(req.params);
             var table = JSON.parse(req.params.table);
@@ -52,6 +53,7 @@ class Api {
         
         // find
         // api/find/test4/query/{}
+        // TODO: check api user "group" permission and find out if they can see the table queried
         this.handler.get('/find/:dbName/query/:query', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -66,7 +68,8 @@ class Api {
             });  
         });
         
-        // specific find function to datatables - this needs to be changes so it should return a columns obj and a data obj
+        // specific find function to datatables - this needed to be changed so it should return a columns obj and a data obj
+        // TODO: check api user "group" permission and find out if they can see the table queried
         this.handler.get('/dfind/:dbName/query/:query', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -77,7 +80,6 @@ class Api {
                     res.send('An error occurred!');
                 } else {
                     // send back a data obj
-                    
                     var columns = [];
                     
                     var columnNames = Object.keys(docs[0]);
@@ -93,6 +95,7 @@ class Api {
         
         // insert
         // api/insert/test4/doc/{}
+        // TODO: check api user "group" permission and find out if they are allowed to insert
         this.handler.get('/insert/:dbName/doc/:doc', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -115,6 +118,7 @@ class Api {
         
         // update
         // api/update/test4/query/{}/update/{}/opts/{}
+        // TODO: check api user "group" permission and find out if they are allowed to update
         this.handler.get('/update/:dbName/query/:query/update/:update/opts/:opts', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;

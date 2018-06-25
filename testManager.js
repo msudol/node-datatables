@@ -21,7 +21,7 @@ class TestManager {
 
     init(callback) {   
         var self = this;
-        self.testList = [self.testRootTableName, self.testNewSubTable1, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testNewSubTable2, self.testWriteTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testViewUser, self.testVerifyUser];
+        self.testList = [self.testRootTableName, self.testNewSubTable1, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testNewSubTable2, self.testNewSubTable3, self.testWriteTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testViewUser, self.testVerifyUser];
         self.runner(self.testList, 0, callback);
     }
         
@@ -78,7 +78,25 @@ class TestManager {
     
     // test creating a new subtable test 1
     testNewSubTable1(self) {
-        var testTable = {name: 'test1', desc: 'Just a test', fields: ['key', 'val', 'etc'], unique: ['key']};
+        var group = {};
+        group.users = {
+            query: true, 
+            insert: true,
+            update: true,
+            remove: true,
+            create: false,
+            drop: false,
+        };
+        group.admins = {
+            query: true, 
+            insert: true,
+            update: true,
+            remove: true,
+            create: true,
+            drop: true,
+        };        
+        
+        var testTable = {name: 'test1', desc: 'Just a test', fields: ['key', 'val', 'etc'], unique: ['key'], group: group};
         console.log(" - Test creating table 1");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
@@ -120,8 +138,46 @@ class TestManager {
     
     // test creating a new subtable test2 
     testNewSubTable2(self) {
-        var testTable = {name: 'test2', desc: 'Another test table', fields: ['key', 'val', 'etc'], unique: ['key']};
+        var group = {};
+        group.users = {
+            query: true, 
+            insert: true,
+            update: true,
+            remove: true,
+            create: false,
+            drop: false,
+        };
+        group.admins = {
+            query: true, 
+            insert: true,
+            update: true,
+            remove: true,
+            create: true,
+            drop: true,
+        };        
+        var testTable = {name: 'test2', desc: 'Another test table', fields: ['key', 'val', 'etc'], unique: ['key'], group: group};
         console.log(" - Test creating table test 2");
+        // test creating a new subtable
+        self.db.subTable(testTable.name, testTable, function () {
+            console.log(" - Created new subtable");
+            self.isRunning = false;
+            return;
+        })
+    }
+    
+    // test creating a new subtable test2 
+    testNewSubTable3(self) {
+        var group = {};
+        group.admins = {
+            query: true, 
+            insert: true,
+            update: true,
+            remove: true,
+            create: true,
+            drop: true,
+        };
+        var testTable = {name: 'adminOnly', desc: 'An admin only table', fields: ['key', 'val', 'etc'], unique: ['key'], group: group};
+        console.log(" - Test creating table test 3");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
             console.log(" - Created new subtable");
@@ -148,8 +204,15 @@ class TestManager {
                 } else {
                     console.log("- Wrote data: " + JSON.stringify(newDoc));
                 }
-                self.isRunning = false;
-                return;
+                self.db.insert("adminOnly", {key:"permission", val:"denied", etc:"maybe"}, function (err, newDoc) {
+                    if (err) {
+                        console.log("- Error writing: " + err.errorType);
+                    } else {
+                        console.log("- Wrote data: " + JSON.stringify(newDoc));
+                    }
+                    self.isRunning = false;
+                    return;
+                }); 
             }); 
             
         });    
@@ -187,7 +250,7 @@ class TestManager {
     // test creating the users sub table.
     testNewUserSubTable(self) {
         console.log(" - Test create new user table");
-        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email","group","salt"],"unique":["userName"]};
+        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email","group","salt"], unique: ["userName"], group: ['admins']};
         // test creating a new subtable
         self.userDb.subTable(testTable.name, testTable, function () {
             console.log(" - Created new users subtable");
@@ -199,21 +262,29 @@ class TestManager {
     // test creating a user
     testCreateUser(self) {
         console.log(" - Test create new users");
-        self.userManager.createUser("user","Test","Dummy","password","test@dummy.com","users", function(err, newDoc) {
+        self.userManager.createUser("user","Test","Dummy","password","test@dummy.com",['users'], function(err, newDoc) {
             if (err) {
                 console.log(" - Error writing: " + err.errorType);
             } else {
                 console.log(" - Wrote data: " + JSON.stringify(newDoc));
             }
             // create another user
-            self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com","users", function(err, newDoc) {
+            self.userManager.createUser("user2","Test","Dummy","password","test@dummy.com",['users'], function(err, newDoc) {
                 if (err) {
                     console.log(" - Error writing: " + err.errorType);
                 } else {
                     console.log(" - Wrote data: " + JSON.stringify(newDoc));
                 }
-                self.isRunning = false;
-                return;
+                // create an admin user
+                self.userManager.createUser("admin","Test","Dummy","password","test@dummy.com",['users','admins'], function(err, newDoc) {
+                    if (err) {
+                        console.log(" - Error writing: " + err.errorType);
+                    } else {
+                        console.log(" - Wrote data: " + JSON.stringify(newDoc));
+                    }
+                    self.isRunning = false;
+                    return;
+                }); 
             }); 
         });   
     }

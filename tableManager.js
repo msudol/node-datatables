@@ -103,7 +103,7 @@ class TableManager {
     /**
      * Create a sub table 
      * @param   {string} tableName - A unique table name
-     * @param   {object}   tableObj - The table object to create, expects {name: str, fields: array, unique: array}
+     * @param   {object}   tableObj - The table object to create, expects {name: str, fields: array, unique: array, group: object}
      * @param   {function} callback - Callback Function
      * @returns {function} - Callback Function
      */
@@ -112,10 +112,16 @@ class TableManager {
         var tableName = tableName;
         var callback = callback;
         
+        // inspect the tableObj and deny it, if it false the required data
+        if ((!tableObj.name) || (!tableObj.fields) || (!tableObj.unique) || (!tableObj.group)) {
+            console.log("Cannot create subtable without required fields.");
+            return;
+        }
+        
         // inspect the root table
         this.db[this.rootName].find({name: tableName}, function(err, docs) {
             if (err) {
-                console.error(err);
+                console.error(err);  
             }
             
             // create the new subtable

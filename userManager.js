@@ -49,9 +49,9 @@ class UserManager {
 
     /**
      * Decrypts text by given key
-     * @param String base64 encoded input data
-     * @param Buffer masterkey
-     * @returns String decrypted (original) text
+     * @param   {String} encdata   base64 encoded input data
+     * @param   {Buffer} masterkey  master key
+     * @returns String   decrypted (original) text
      */
     decrypt(encdata, masterkey){
         // base64 decoding
@@ -71,9 +71,21 @@ class UserManager {
         return decrypted;
     }    
     
-    // creates a user in the user table
+    /**
+     * Create a new user in the users table
+     * @param   {string} userName  A unique username
+     * @param   {string} firstName First Name
+     * @param   {string} lastName  Last Name
+     * @param   {string} password  Password
+     * @param   {string} email     Email Address
+     * @param   {Array} group     Array of groups user belongs to
+     * @param   {function} callback  Callback function
+     * @returns {function} callback
+     */
     createUser(userName, firstName, lastName, password, email, group, callback) {
         var self = this;
+        // make sure group is an array
+        group = group instanceof Array ? group : [group];
         var enc = this.encrypt(password, self.masterKey);
         self.userDb.insert(self.tableName, {userName: userName, firstName: firstName, lastName: lastName, password: enc, email: email, group: group}, function (err, newDoc) {
             return callback(err, newDoc);

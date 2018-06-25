@@ -58,3 +58,4 @@ typings/
 .env
 
 sess/nedb_persistence_file.db
+db/*.db

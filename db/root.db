@@ -1,4 +1,0 @@
-{"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
-{"name":"test1","desc":"Just a test","fields":["key","val","etc"],"unique":["key"],"_id":"CodGPnI4ZMmGL698"}
-{"$$deleted":true,"_id":"CodGPnI4ZMmGL698"}
-{"name":"test2","desc":"Another test table","fields":["key","val","etc"],"unique":["key"],"_id":"PIfcFKPTfPi3R7J9"}
