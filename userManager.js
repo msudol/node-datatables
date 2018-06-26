@@ -156,40 +156,47 @@ class UserManager {
     
     // allowed access returns access allowed for a given user based on the rootTable
     // should return an object containing query: true, insert: true, update: true, remove: true
-    allowedAccess(userName, targetTable, callback) {
+    //allowedAccess(userName, targetTable, callback) {
+    allowedAccess(userName, callback) {
         var self = this;
         
         // we don't care about target table at this moment.
-        var targetTable = targetTable;
+        //var targetTable = targetTable;
         
         self.userDb.find(self.tableName, {userName: userName}, function(err, docs) {
             if (err) {
                 console.log("- Error finding docs");
                  return callback(err, docs);
             } else {
-                //get this users group membersip from docs[0]
-                var groups = docs[0].group;
-                var settings = docs[0].settings;
-                // http://localhost:3000/api/find/root/query/{"$and":[{"group.users":{"$exists":true}},{"group.admins":{"$exists":true}}]}
-                // http://localhost:3000/api/find/root/query/{"$or":[{"group.users.query":true},{"group.admins.query":true}]}
-                var query = [];
-                
-                for (var i = 0; i < groups.length; i++) { 
-                    var str = '{"group.'+groups[i]+'.query":true}';
-                    query.push(JSON.parse(str));
-                }
+                if (docs[0]) {
+                    //get this users group membersip from docs[0]
+                    var groups = docs[0].group;
+                    var settings = docs[0].settings;
+                    // http://localhost:3000/api/find/root/query/{"$or":[{"group.users.query":true},{"group.admins.query":true}]}
+                    var query = [];
 
-                self.db.find(self.db.rootName, {$or:query}, function(err, docs) {
-                    if (err) {
+                    // query access for the groups the user is in
+                    for (var i = 0; i < groups.length; i++) { 
+                        var str = '{"group.'+groups[i]+'.query":true}';
+                        query.push(JSON.parse(str));
+                    }
+
+                    self.db.find(self.db.rootName, {$or:query}, function(err, docs) {
+                        if (err) {
+                            return callback(err, docs);
+                            return err;
+                        } 
+                        console.log(docs); 
                         return callback(err, docs);
-                        return err;
-                    } 
-                    console.log(docs); 
-                    return callback(err, docs);
-                });
+                    });
+                } else {
+                        return callback("No access found");
+                }
             }
         });         
     }
+    
+    
     
 }
 

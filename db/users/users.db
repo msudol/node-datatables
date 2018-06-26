@@ -2,4 +2,3 @@
 {"userName":"user","firstName":"Bob","lastName":"Jones","password":"W7iTBG0hq/lzYDLAcHLWT27p+khFI7WTHXLl4MgKiRsDkIELLfrAu10YSZs6K1gWBIsmYDevmmSVbxVfLU7jukz2tEg80CJdlLzxzDKa4+hljr+PZYtto8z6k1c6g9VS9KyWWoDgt8U=","email":"test@dummy.com","group":["users"],"settings":{},"_id":"Q0b8Beive3aLIOnR"}
 {"userName":"admin","firstName":"Test","lastName":"Dummy","password":"cajVFNE8BU5EP43yagZGk13NCTMV7WbAeN/nFygBTn/hcDKx4aMWKQfqDYZRCW2qJ3reFea3Qz3sDs5Dq9ecfFW93HSochWYHKJ0j78TRpDL+8qXOBJrz4ZgGbonM4yS4Gjso8Q9R2Q=","email":"test@dummy.com","group":["users","admins"],"settings":{},"_id":"qM9AaWC2jNqhjPfX"}
 {"$$indexCreated":{"fieldName":"userName","unique":true,"sparse":false}}
-{"userName":"user","firstName":"Bob","lastName":"Jones","password":"W7iTBG0hq/lzYDLAcHLWT27p+khFI7WTHXLl4MgKiRsDkIELLfrAu10YSZs6K1gWBIsmYDevmmSVbxVfLU7jukz2tEg80CJdlLzxzDKa4+hljr+PZYtto8z6k1c6g9VS9KyWWoDgt8U=","email":"test@dummy.com","group":["users"],"settings":{},"_id":"Q0b8Beive3aLIOnR"}

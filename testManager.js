@@ -337,10 +337,10 @@ class TestManager {
         });
     }
     
-    // test the users access against a particule table
+    // test the users access to tables in the root table
     testAllowedAccess(self) {
         console.log(" - Test allowed access");
-        self.userManager.allowedAccess("user", "test2", function(err, docs) {
+        self.userManager.allowedAccess("user", function(err, docs) {
             if (err) {
                 console.log(" - Error viewing user: " + err.errorType);
             } else {

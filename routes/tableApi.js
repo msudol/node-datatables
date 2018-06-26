@@ -8,11 +8,16 @@
 var express = require('express');
 var router = express.Router();
 
+var UserManager = require('../userManager.js');
+
 class Api {
     
-    constructor(db) {
+    constructor(db, userDb, userTableName) {
         this.handler = router;        
         this.db = db;
+        this.userDb = userDb;
+        this.userTableName = userTableName;
+        this.userManager = new UserManager(this.db, this.userDb, this.userTableName);        
         var self = this;
         
         // middleware that is specific to this router
@@ -74,25 +79,47 @@ class Api {
             console.log(req.params);
             var dbName = req.params.dbName;
             var query = JSON.parse(req.params.query);
+
+            //console.log(req.session);
             
-            self.db.find(dbName, query, function(err, docs) {
-                if (err) {
-                    res.send('An error occurred!');
-                } else {
-                    // send back a data obj
-                    var columns = [];
-                    
-                    var columnNames = Object.keys(docs[0]);
-                    for (var i in columnNames) {
-                        columns.push({data: columnNames[i], title: columnNames[i]});
-                    }                    
-                    
-                    var data = docs;
-                    res.send({data: data, columns: columns});
-                }
-            });  
+            // querying the root server!
+            if (dbName == self.db.rootName) {
+                self.userManager.allowedAccess(req.session.user, function(err, docs) {
+                    if (err) {
+                        res.send('An error occurred!');
+                    } else {
+                        // send back a data obj
+                        var columns = [];
+
+                        var columnNames = Object.keys(docs[0]);
+                        for (var i in columnNames) {
+                            columns.push({data: columnNames[i], title: columnNames[i]});
+                        }                    
+
+                        var data = docs;
+                        res.send({data: data, columns: columns});
+                    } 
+                });
+            } else {                                 
+                self.db.find(dbName, query, function(err, docs) {
+                    if (err) {
+                        res.send('An error occurred!');
+                    } else {
+                        // send back a data obj
+                        var columns = [];
+
+                        var columnNames = Object.keys(docs[0]);
+                        for (var i in columnNames) {
+                            columns.push({data: columnNames[i], title: columnNames[i]});
+                        }                    
+
+                        var data = docs;
+                        res.send({data: data, columns: columns});
+                    }
+                });  
+            }
         });
-        
+            
         // insert
         // api/insert/test4/doc/{}
         // TODO: check api user "group" permission and find out if they are allowed to insert

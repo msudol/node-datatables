@@ -38,7 +38,7 @@ class WebServer {
         this.router = router; 
         
         // this feels bloated now
-        this.tableApi = new TableApi(this.db);
+        this.tableApi = new TableApi(this.db, this.userDb, "users");
         
         // send the tableName that users are stored in, in this instance of the server
         this.auth = new Auth(this.db, this.userDb, "users");
