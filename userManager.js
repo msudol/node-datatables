@@ -190,12 +190,13 @@ class UserManager {
                         return callback(err, docs);
                     });
                 } else {
-                        return callback("No access found");
+                    return callback("No access found");
                 }
             }
         });         
     }
     
+    //TODO: create a function to check what groups a user belongs to
     // need a fast way to query if a user has a specific level of access for a specific table
     tableAccess(userName, tableName, callback) {
         

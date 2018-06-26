@@ -97,6 +97,8 @@ class Auth {
                     // this is ugly and will have to be better
                     req.session.user = req.body.username;
                     req.session.loggedIn = true;
+                    //TODO: query table access and get this users group membership on login and save into the session?
+                    
                     console.log("Logging in with user: " + req.body.username);                       
                     res.send({redirect: '/client'});
                 });
@@ -119,8 +121,8 @@ class Auth {
         self.handler.use(function(req, res, next) {
             // check the session for the value loggedIn 
             if (req.session && self.isValidUser(req.session.user) && req.session.loggedIn) {
-                // we could query the user table here and deliver more info to the session
-                //TODO: send more info to the browser
+                //TODO: we could query the user table here and deliver more info to the session
+                //TODO: maybe send more info to the browser
                 return next();
             } else {
                 // could return a location instead of a 401
