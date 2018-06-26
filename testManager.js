@@ -21,7 +21,7 @@ class TestManager {
 
     init(callback) {   
         var self = this;
-        self.testList = [self.testRootTableName, self.testNewSubTable1, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testNewSubTable2, self.testNewSubTable3, self.testWriteTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testViewUser, self.testVerifyUser, self.testAllowedAccess];
+        self.testList = [self.testRootTableName, self.testNewSubTable1, self.testRootTableDocs, self.testDropTable, self.testRootTableDocs, self.testNewSubTable2, self.testNewSubTable3, self.testWriteTable, self.testRootTableDocs, self.testNewSubTableWrite, self.testTableAllowedFields, self.testGetAllFromTable, self.testNewUserSubTable, self.testCreateUser, self.testUpdateUser, self.testViewUser, self.testVerifyUser, self.testAllowedTables];
         self.runner(self.testList, 0, callback);
     }
         
@@ -338,9 +338,9 @@ class TestManager {
     }
     
     // test the users access to tables in the root table
-    testAllowedAccess(self) {
+    testAllowedTables(self) {
         console.log(" - Test allowed access");
-        self.userManager.allowedAccess("user", function(err, docs) {
+        self.userManager.allowedTables("user", function(err, docs) {
             if (err) {
                 console.log(" - Error viewing user: " + err.errorType);
             } else {

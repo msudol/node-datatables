@@ -154,10 +154,10 @@ class UserManager {
         });
     }
     
-    // allowed access returns access allowed for a given user based on the rootTable
+    // allowed tables returns access allowed for a given user based on the rootTable
     // should return an object containing query: true, insert: true, update: true, remove: true
-    //allowedAccess(userName, targetTable, callback) {
-    allowedAccess(userName, callback) {
+    //allowedTables(userName, targetTable, callback) {
+    allowedTables(userName, callback) {
         var self = this;
         
         // we don't care about target table at this moment.
@@ -194,6 +194,11 @@ class UserManager {
                 }
             }
         });         
+    }
+    
+    // need a fast way to query if a user has a specific level of access for a specific table
+    tableAccess(userName, tableName, callback) {
+        
     }
     
     

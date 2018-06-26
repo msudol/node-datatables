@@ -81,10 +81,9 @@ class Api {
             var query = JSON.parse(req.params.query);
 
             //console.log(req.session);
-            
-            // querying the root server!
+            // querying the root server so lets check to see if we have access
             if (dbName == self.db.rootName) {
-                self.userManager.allowedAccess(req.session.user, function(err, docs) {
+                self.userManager.allowedTables(req.session.user, function(err, docs) {
                     if (err) {
                         res.send('An error occurred!');
                     } else {
