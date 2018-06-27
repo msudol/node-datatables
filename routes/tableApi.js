@@ -86,6 +86,8 @@ class Api {
                 self.userManager.allowedTables(req.session.user, function(err, docs) {
                     if (err) {
                         res.send('An error occurred!');
+                    } else if ((docs[0] === undefined) || (docs[0] === null)) {
+                        res.send('No documents found!');
                     } else {
                         // send back a data obj
                         var columns = [];
@@ -103,6 +105,8 @@ class Api {
                 self.db.find(dbName, query, function(err, docs) {
                     if (err) {
                         res.send('An error occurred!');
+                    } else if ((docs[0] === undefined) || (docs[0] === null)) {
+                        res.send('No documents found!');
                     } else {
                         // send back a data obj
                         var columns = [];

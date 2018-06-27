@@ -30,70 +30,77 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
     
     if (currentTable) {
         self.getData(currentUrl, function (data) {
-            console.log(data);
-            var columns = [];
+            console.log("Table data: " + data);
             
-            var columnNames = Object.keys(data.data[0]);
-            for (var i in columnNames) {
-                columns.push({data: columnNames[i], title: columnNames[i], defaultContent: "<i>Not set</i>"});
-            }
-            // init table
-            self.activeTable = $(selector).DataTable({
-                data: data.data,
-                columns: columns,
-                dom: 'Bfrtip',
-                "language": {
-                  "emptyTable": "No data available in table"
-                }  ,              
-                select: {
-                    style: "single",
-                    items: "row",
-                    blurable: true
+            // if there is data.data we can build a table.
+            if (data.data) {
+                var columns = [];
+                var columnNames = Object.keys(data.data[0]);
+                for (var i in columnNames) {
+                    columns.push({data: columnNames[i], title: columnNames[i], defaultContent: "<i>Not set</i>"});
                 }
-            });
-            // set the url for this table
-            self.activeTable.ajax.url(currentUrl);
-            
-            // programmatically add buttons based on things
-            self.activeTable.button().add(0, {
-                action: function (e, dt, button, config) {
-                    console.log("Refreshing");
-                    self.activeTable.ajax.reload(function (data) { 
-                        console.log("Refresh complete");
-                        console.log(data);
-                    });
-                },
-                text: 'Refresh'
-            });
-            
-            if (tableName == "root") {
-                self.activeTable.button().add(1, {
-                    extend: 'selectedSingle',
-                    text: 'Open Selected Table',
-                    action: function ( e, dt, button, config ) {
-                        var tableRow = dt.row( { selected: true } ).data();
-                        self.activeTable.destroy();
-                        console.log(tableRow.name + " - " + tableRow.desc); 
-                        $(self.activeSelector).html("");
-                        self.loadTable(selector, tableRow.name, tableRow.desc);
+                // init table
+                self.activeTable = $(selector).DataTable({
+                    data: data.data,
+                    columns: columns,
+                    dom: 'Bfrtip',
+                    "language": {
+                      "emptyTable": "No data available in table"
+                    },              
+                    select: {
+                        style: "single",
+                        items: "row",
+                        blurable: true
                     }
-                });  
-            }
-            
-            if (tableName != "root") {
+                });
+
+                // set the url for this table
+                self.activeTable.ajax.url(currentUrl);
+
+                // programmatically add buttons based on things
                 self.activeTable.button().add(0, {
                     action: function (e, dt, button, config) {
-                        console.log("Table Name: " + tableName + "  Fields: " + columnNames);
-                        
+                        console.log("Refreshing");
+                        self.activeTable.ajax.reload(function (data) { 
+                            console.log("Refresh complete");
+                            console.log(data);
+                        });
                     },
-                    text: 'Add Row'
-                }); 
-            }
+                    text: 'Refresh'
+                });
+
+                if (tableName == "root") {
+                    self.activeTable.button().add(1, {
+                        extend: 'selectedSingle',
+                        text: 'Open Selected Table',
+                        action: function ( e, dt, button, config ) {
+                            var tableRow = dt.row( { selected: true } ).data();
+                            self.activeTable.destroy();
+                            console.log(tableRow.name + " - " + tableRow.desc); 
+                            $(self.activeSelector).html("");
+                            self.loadTable(selector, tableRow.name, tableRow.desc);
+                        }
+                    });  
+                }
+
+                if (tableName != "root") {
+                    self.activeTable.button().add(0, {
+                        action: function (e, dt, button, config) {
+                            console.log("Table Name: " + tableName + "  Fields: " + columnNames);
+
+                        },
+                        text: 'Add Row'
+                    }); 
+                }
             
-            /*table.button().add(1, {
-                extend: 'selectNone',
-                text: 'Deselect'
-            });      */         
+                /*table.button().add(1, {
+                    extend: 'selectNone',
+                    text: 'Deselect'
+                });      */  
+            } else {
+                //TODO: what to do if there is no data?
+                $(self.activeSelector).html("No data");
+            }
         });     
     }    
 };

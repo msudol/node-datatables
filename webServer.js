@@ -43,7 +43,6 @@ class WebServer {
         // send the tableName that users are stored in, in this instance of the server
         this.auth = new Auth(this.db, this.userDb, "users");
         this.checkSess = new CheckSess(this.db, this.userDb, "users");
-        
         this.app.use(
             session({
                 secret: sharedSecretKey,
@@ -52,9 +51,11 @@ class WebServer {
                 cookie: {
                     path: '/',
                     httpOnly: true,
-                    maxAge: 24 * 60 * 60 * 1000,   //maxAge: 365 * 24 * 60 * 60 * 1000   // e.g. 1 year
+                    //maxAge: 24 * 60 * 60 * 1000,   //maxAge: 24 * 60 * 60 * 1000   // e.g. 1 day
+                    maxAge: 5 * 60 * 1000, // 5 minutes for testing
                     secure: false,        // set to true to ensure only usable over https
-                    ephemeral: true     // deletes cookie when browser is closed        
+                    //ephemeral: true,     // deletes cookie when browser is closed  - can't have ephemeral AND maxAge apparently      
+                    sameSite: true      // enforce same site
                 },
                 store: new NedbStore({
                     filename: 'sess/nedb_persistence_file.db'
