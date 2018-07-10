@@ -83,6 +83,7 @@ class Api {
             //console.log(req.session);
             // querying the root server so lets check to see if we have access
             if (dbName == self.db.rootName) {
+                // check what user has access to and show them
                 self.userManager.allowedTables(req.session.user, function(err, docs) {
                     if (err) {
                         res.send('An error occurred!');
@@ -101,25 +102,40 @@ class Api {
                         res.send({data: data, columns: columns});
                     } 
                 });
-            } else {                                 
-                self.db.find(dbName, query, function(err, docs) {
+            } else { 
+                // don't send anything if they dont have table access
+                self.userManager.allowedTables(req.session.user, function(err, docs) {
+                    var dbs = [];
+                    for (db in docs) {
+                        dbs.push(docs[db].name);
+                    }
+                    console.log("Checking permission on: " + dbs);
+                    
                     if (err) {
                         res.send('An error occurred!');
-                    } else if ((docs[0] === undefined) || (docs[0] === null)) {
-                        res.send('No documents found!');
+                    } else if (dbs.includes(dbName)) {
+                        self.db.find(dbName, query, function(err, docs) {
+                            if (err) {
+                                res.send('An error occurred!');
+                            } else if ((docs[0] === undefined) || (docs[0] === null)) {
+                                res.send('No documents found!');
+                            } else {
+                                // send back a data obj
+                                var columns = [];
+
+                                var columnNames = Object.keys(docs[0]);
+                                for (var i in columnNames) {
+                                    columns.push({data: columnNames[i], title: columnNames[i]});
+                                }                    
+
+                                var data = docs;
+                                res.send({data: data, columns: columns});
+                            }
+                        }); 
                     } else {
-                        // send back a data obj
-                        var columns = [];
-
-                        var columnNames = Object.keys(docs[0]);
-                        for (var i in columnNames) {
-                            columns.push({data: columnNames[i], title: columnNames[i]});
-                        }                    
-
-                        var data = docs;
-                        res.send({data: data, columns: columns});
+                        res.send('No access to this table!');
                     }
-                });  
+                });
             }
         });
             
