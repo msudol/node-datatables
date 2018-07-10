@@ -57,6 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# Node Datatables ingore list
 sess/nedb_persistence_file.db
 db/*.db
+db/users/*.db
 config.js
