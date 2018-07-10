@@ -1,5 +1,7 @@
 /* app.js */
 "use strict";
+// import configurations
+var Config = require('./config.js');
 // import TableManager class 
 var TableManager = require('./tableManager.js');
 // import TestManager Class
@@ -16,10 +18,8 @@ var db = new TableManager('root', false, 'db');
 // init the userDB - we can add false to not use the test table above 
 var userDb = new TableManager('root', false, 'db/users');
 
-// tack on an encyrption key variable to userDb - Change this to something long and complex of your own
-// MASTERKEY: the key used for encryption/decryption for this user database
-//            NOTICE! - It has to be cryptographic safe - this means randomBytes or derived by pbkdf2 (for example)
-userDb.masterKey = "NCQEq6fcAW8LTNPET6kksxiYhpCho0bv3vMc1mWH19zgMO1SxSyV9qYheaFy";
+// tack on an encyrption key variable to userDb
+userDb.masterKey = Config.masterKey;
 
 // function will be sent to the table init function as a callback.
 var onRootTableInit = function (db) {
