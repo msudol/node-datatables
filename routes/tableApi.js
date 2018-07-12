@@ -58,23 +58,27 @@ class Api {
         
         // find
         // api/find/test4/query/{}
-        // TODO: check api user "group" permission and find out if they can see the table queried
         this.handler.get('/find/:dbName/query/:query', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
             var query = JSON.parse(req.params.query);
             
-            self.db.find(dbName, query, function(err, docs) {
-                if (err) {
-                    res.send('An error occurred!');
+            self.userManager.hasPermission(req.session.user, dbName, "query", function(err, hasPerm) {
+                if (hasPerm) {
+                    self.db.find(dbName, query, function(err, docs) {
+                        if (err) {
+                            res.send('An error occurred!');
+                        } else {
+                            res.send(docs);
+                        }
+                    });  
                 } else {
-                    res.send(docs);
+                    res.sendStatus(401);
                 }
-            });  
+            });
         });
         
         // specific find function to datatables - this needed to be changed so it should return a columns obj and a data obj
-        // TODO: check api user "group" permission and find out if they can see the table queried
         this.handler.get('/dfind/:dbName/query/:query', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -141,7 +145,6 @@ class Api {
             
         // insert
         // api/insert/test4/doc/{}
-        // TODO: check api user "group" permission and find out if they are allowed to insert
         this.handler.get('/insert/:dbName/doc/:doc', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
@@ -162,34 +165,64 @@ class Api {
                         }
                     });                    
                 } else {
-                     res.send('No insert access to this table!');
+                     res.sendStatus(401);
                 }
             });
         });
           
         // update
         // api/update/test4/query/{}/update/{}/opts/{}
-        // TODO: check api user "group" permission and find out if they are allowed to update
         this.handler.get('/update/:dbName/query/:query/update/:update/opts/:opts', function (req, res) {
             console.log(req.params);
             var dbName = req.params.dbName;
             var query = JSON.parse(req.params.query);
             var update = JSON.parse(req.params.update);
             var opts = JSON.parse(req.params.opts) || {};
-            
-            self.db.update(dbName, query, update, opts, function(err, numReplaced) {
-                if (err) {
-                    if (err.errorType == "uniqueViolated") {
-                        res.send('Cannot write a duplicate unique key!');
-                    } else {  
-                        res.send('An error occurred!');
-                    }
+
+            self.userManager.hasPermission(req.session.user, dbName, "update", function(err, hasPerm) {
+                if (hasPerm) {
+                    self.db.update(dbName, query, update, opts, function(err, numReplaced) {
+                        if (err) {
+                            if (err.errorType == "uniqueViolated") {
+                                res.send('Cannot write a duplicate unique key!');
+                            } else {  
+                                res.send('An error occurred!');
+                            }
+                        } else {
+                            var retDocs = "Replaced: " + numReplaced;
+                            res.send(retDocs);
+                        }
+                    });                   
                 } else {
-                    var retDocs = numReplaced;
-                    res.send(retDocs);
+                     res.sendStatus(401);
                 }
-            });  
-        });     
+            });
+        }); 
+
+        // remove
+        // api/remove/test4/query/{}/
+        this.handler.get('/remove/:dbName/query/:query', function (req, res) {
+            console.log(req.params);
+            var dbName = req.params.dbName;
+            var query = JSON.parse(req.params.query);
+            //var opts = JSON.parse(req.params.opts) || {};
+
+            self.userManager.hasPermission(req.session.user, dbName, "remove", function(err, hasPerm) {
+                if (hasPerm) {
+                    self.db.remove(dbName, query, function(err, numRemoved) {
+                        if (err) {
+                            res.send('An error occurred!');
+                        } else {
+                            var retDocs = "Removed: " + numRemoved;
+                            res.send(retDocs);
+                        }
+                    });                   
+                } else {
+                     res.sendStatus(401);
+                }
+            });
+        });         
+        
     }    
 }
 

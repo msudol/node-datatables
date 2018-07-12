@@ -272,6 +272,25 @@ class TableManager {
         });
     }
     
+
+    // need to remove info from a table, with a return function
+    remove(tableName, query, callback) {
+        var self = this;
+        var data = data;
+        var callback = callback;
+        
+        if (this.db[tableName] === undefined) {
+            return callback("Table doesn't exist!", 0);
+        }
+        
+        this.db[tableName].remove(query, {multi: true}, function(err, numReplaced) {
+            if (err) {          
+                console.error(err);
+            }
+            return callback(err, numReplaced);
+        });
+    }
+    
     // assumes tablename is going to be unique from setting indexing and returns the fields key.
     // TODO: implement this in someway
     allowedFields(tableName, callback) {
