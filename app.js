@@ -41,7 +41,7 @@ var onRootTableInit = function (db) {
 // Start the webserver on a callback from the last database initialized during startup
 var startWebServer = function () {
     // setup instance of an express web server for this DB.
-    var ws = new WebServer("3000", db, userDb);
+    var ws = new WebServer(Config.webServer, db, userDb);
     ws.init();
 };
 

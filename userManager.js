@@ -166,7 +166,7 @@ class UserManager {
         self.userDb.find(self.tableName, {userName: userName}, function(err, docs) {
             if (err) {
                 console.log("- Error finding docs");
-                 return callback(err, docs);
+                return callback(err, docs);
             } else {
                 if (docs[0]) {
                     //get this users group membersip from docs[0]
@@ -184,26 +184,61 @@ class UserManager {
                     self.db.find(self.db.rootName, {$or:query}, function(err, docs) {
                         if (err) {
                             return callback(err, docs);
-                            return err;
                         } 
                         console.log(docs); 
                         return callback(err, docs);
                     });
                 } else {
-                    return callback("No access found");
+                    return callback("No access");
                 }
             }
         });         
     }
     
-    //TODO: create a function to check what groups a user belongs to
     // need a fast way to query if a user has a specific level of access for a specific table
-    tableAccess(userName, tableName, callback) {
+    hasPermission(userName, tableName, perm, callback) {
+        var self = this;
+        var tableName = tableName;
         
+        self.userDb.find(self.tableName, {userName: userName}, function(err, docs) {
+            if (err) {
+                console.log("- Error finding docs");
+                return callback(err, false);
+            } else {
+                if (docs[0]) {
+                    //get this users group membersip from docs[0]
+                    var groups = docs[0].group;
+                    var settings = docs[0].settings;
+
+                    // do the query on specific table in the root table 
+                    self.db.find(self.db.rootName, {name: tableName}, function(err, docs) {
+                        if (err) {
+                            return callback(err, false);
+                        } else {
+                            if (docs[0]) {
+                                var hasPerm = false;
+                                for (var i = 0; i < groups.length; i++) { 
+                                    if ((docs[0].group[groups[i]]) && (docs[0].group[groups[i]][perm])) {   
+                                        hasPerm = true;
+                                        console.log(groups[i] + " permission: " + perm + " is: true");
+                                    } else {
+                                        console.log(groups[i] + " permission: " + perm + " is: false");
+                                    }    
+                                }
+                                return callback(err, hasPerm);
+                            } else {
+                                return callback("No document");            
+                            }
+                        }
+                    });
+                } else {
+                    return callback("No access");
+                }
+            }
+        });  
     }
     
-    
-    
+ 
 }
 
 module.exports = UserManager;

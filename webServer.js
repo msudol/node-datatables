@@ -6,8 +6,6 @@
 */
 "use strict";
 
-// trying out some session storage
-var sharedSecretKey = 'simplesecret';
 // let's get sessions now
 var session = require('express-session');
 // can't have a webserver without express
@@ -29,9 +27,10 @@ var CheckSess = require('./routes/checkSess');
 // yes it's a class for the webserver, why? I don't know yet but we'll see.
 class WebServer {
     
-    constructor(port, db, userDb) {
-        
-        this.port = port;
+    constructor(config, db, userDb) {
+        var self = this;
+        this.config = config;
+        this.port = config.port;
         this.db = db;
         this.userDb = userDb;
         this.app = app;
@@ -45,16 +44,16 @@ class WebServer {
         this.checkSess = new CheckSess(this.db, this.userDb, "users");
         this.app.use(
             session({
-                secret: sharedSecretKey,
+                secret: self.config.session.sharedSecretKey,
                 resave: false,
                 saveUninitialized: false,
                 cookie: {
                     path: '/',
                     httpOnly: true,
                     //maxAge: 24 * 60 * 60 * 1000,   //maxAge: 24 * 60 * 60 * 1000   // e.g. 1 day
-                    maxAge: 5 * 60 * 1000, // 5 minutes for testing
+                    //maxAge: 5 * 60 * 1000, // 5 minutes for testing
                     secure: false,        // set to true to ensure only usable over https
-                    //ephemeral: true,     // deletes cookie when browser is closed  - can't have ephemeral AND maxAge apparently      
+                    ephemeral: true,     // deletes cookie when browser is closed  - can't have ephemeral AND maxAge apparently      
                     sameSite: true      // enforce same site
                 },
                 store: new NedbStore({
@@ -76,7 +75,7 @@ class WebServer {
     
     init() {
         // start the server
-        this.server = this.app.listen(this.port, () => console.log('Example app listening on port 3000!'));         
+        this.server = this.app.listen(this.port, () => console.log('Example app listening on port: ' + this.port));         
     }
     
     stop() {

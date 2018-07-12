@@ -147,21 +147,26 @@ class Api {
             var dbName = req.params.dbName;
             var doc = JSON.parse(req.params.doc);
             
-            self.db.insert(dbName, doc, function(err, newDoc) {
-                if (err) {
-                    if (err.errorType == "uniqueViolated") {
-                        res.send('Cannot write a duplicate unique key!');
-                    } else {  
-                        res.send('An error occurred!');
-                    }
+            self.userManager.hasPermission(req.session.user, dbName, "insert", function(err, hasPerm) {
+                if (hasPerm) {
+                    self.db.insert(dbName, doc, function(err, newDoc) {
+                        if (err) {
+                            if (err.errorType == "uniqueViolated") {
+                                res.send('Cannot write a duplicate unique key!');
+                            } else {  
+                                res.send('An error occurred!');
+                            }
+                        } else {
+                            var retDocs = JSON.stringify(newDoc);
+                            res.send(retDocs);
+                        }
+                    });                    
                 } else {
-                    var retDocs = JSON.stringify(newDoc);
-                    res.send(retDocs);
+                     res.send('No insert access to this table!');
                 }
-            });  
+            });
         });
-        
-        
+          
         // update
         // api/update/test4/query/{}/update/{}/opts/{}
         // TODO: check api user "group" permission and find out if they are allowed to update
@@ -184,10 +189,8 @@ class Api {
                     res.send(retDocs);
                 }
             });  
-        });
-            
-    }  
-    
+        });     
+    }    
 }
 
 module.exports = Api;
