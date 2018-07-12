@@ -20,6 +20,8 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
     var self = this;
     this.activeSelector = selector;
     var currentTable = $(selector);
+    
+    //TODO: this url and port may change - make configurable
     var currentUrl = 'http://localhost:3000/api/dfind/' + tableName + '/query/%7B%7D';
     
     var tableTitle = tableDesc || tableName;
@@ -87,10 +89,31 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                     self.activeTable.button().add(0, {
                         action: function (e, dt, button, config) {
                             console.log("Table Name: " + tableName + "  Fields: " + columnNames);
-
+                            $("#actionModal").modal('show');
+                            
+                            var htmlData = "<p>Table Name: " + tableName + "  Fields: " + columnNames + "</p>";
+                            htmlData += "<p>Form data entry coming soon</p>";
+                            
+                            $("#action-modal-body").html(htmlData);
                         },
                         text: 'Add Row'
                     }); 
+
+                    self.activeTable.button().add(1, {
+                        extend: 'selectedSingle',
+                        text: 'Delete',
+                        action: function ( e, dt, button, config ) {
+                            var tableRow = dt.row( { selected: true } ).data();
+                            //console.log(tableRow._id); 
+                            
+                            $.get("http://localhost:3000/api/remove/"+tableName+"/query/%7B%22_id%22:%22"+tableRow._id+"%22%7D", function (data) {
+                                self.activeTable.ajax.reload(function () { 
+                                    //console.log("Refreshing table");
+                                });
+                                console.log(data);
+                            });                            
+                        }
+                    });                      
                 }
             
                 /*table.button().add(1, {
