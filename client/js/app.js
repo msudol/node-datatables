@@ -1,5 +1,14 @@
 var App = function () {
-    // constructor function
+   this.host = "http://localhost:3000";
+};
+
+// useful conversion function
+App.prototype.formDataToJSON = function (formData) {
+    var convertedJSON = {};
+    formData.forEach(function (value, key) {
+        convertedJSON[key] = value;
+    });
+    return convertedJSON;
 };
 
 // getData calls on a url and a callback to get ajax response from the API
@@ -19,10 +28,11 @@ App.prototype.loadMenu = function (selector, url, callback) {
 App.prototype.loadTable = function (selector, tableName, tableDesc) {
     var self = this;
     this.activeSelector = selector;
+    this.currentTableName = tableName;
     var currentTable = $(selector);
     
     //TODO: this url and port may change - make configurable
-    var currentUrl = 'http://localhost:3000/api/dfind/' + tableName + '/query/%7B%7D';
+    var currentUrl = self.host + '/api/dfind/' + tableName + '/query/%7B%7D';
     
     var tableTitle = tableDesc || tableName;
     if (tableTitle === "root") {
@@ -39,7 +49,14 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                 var columns = [];
                 var columnNames = Object.keys(data.data[0]);
                 for (var i in columnNames) {
-                    columns.push({data: columnNames[i], title: columnNames[i], defaultContent: "<i>Not set</i>"});
+                    var isVis = true;
+                    var isSearch = true;
+                    // hide the _id field
+                    if (columnNames[i] == "_id") {
+                        isVis = false;
+                        isSearch = false;
+                    }
+                    columns.push({data: columnNames[i], title: columnNames[i], visible: isVis, searchable: isSearch, defaultContent: "<i>Not set</i>"});
                 }
                 // init table
                 self.activeTable = $(selector).DataTable({
@@ -88,12 +105,17 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                 if (tableName != "root") {
                     self.activeTable.button().add(0, {
                         action: function (e, dt, button, config) {
-                            console.log("Table Name: " + tableName + "  Fields: " + columnNames);
-                            $("#actionModal").modal('show');
-                            
-                            var htmlData = "<p>Table Name: " + tableName + "  Fields: " + columnNames + "</p>";
-                            htmlData += "<p>Form data entry coming soon</p>";
-                            
+                            //console.log("Table Name: " + tableName + "  Fields: " + columnNames);
+                            $("#formModal").modal('show');
+                            var htmlData = '<input type="hidden" id="formAction" name="formAction" value="addRow">';
+                            for (var i in columnNames) {
+                                if (columnNames[i] != "_id") {
+                                    htmlData += `<div class="form-group"> 
+                                                    <label for="form_${columnNames[i]}">${columnNames[i]}</label>
+                                                    <input type="text" class="form-control" id="${columnNames[i]}" name="${columnNames[i]}" placeholder="Enter Data" required>
+                                                </div>`;
+                                }
+                            }
                             $("#action-modal-body").html(htmlData);
                         },
                         text: 'Add Row'
@@ -106,7 +128,7 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                             var tableRow = dt.row( { selected: true } ).data();
                             //console.log(tableRow._id); 
                             
-                            $.get("http://localhost:3000/api/remove/"+tableName+"/query/%7B%22_id%22:%22"+tableRow._id+"%22%7D", function (data) {
+                            $.get(self.host + "/api/remove/" + tableName + "/query/%7B%22_id%22:%22" + tableRow._id + "%22%7D", function (data) {
                                 self.activeTable.ajax.reload(function () { 
                                     //console.log("Refreshing table");
                                 });
@@ -156,11 +178,33 @@ App.prototype.defineDivs = function (main, tables) {
     this.tableDiv = $(tables);
 };
 
+// handle form submission
+App.prototype.handleForm = function (data) {
+    var self = this;
+    var action = data.formAction;
+    console.log("Handling form submission");
+    delete data.formAction;
+    var htmlData = JSON.stringify(data);
+    switch (action) {
+        case "addRow":
+            console.log(encodeURIComponent(htmlData));
+            $.get(self.host + "/api/insert/" + self.currentTableName + "/doc/" + encodeURIComponent(htmlData), function (data) {
+                self.activeTable.ajax.reload(function () { 
+                    //console.log("Refreshing table");
+                });
+            });   
+            break;
+        default: 
+            console.log("No form action");
+    }
+};
+
 // When the page loads, initialize things
 $(document).ready(function () {
      
     app = new App();
     
+    // load menu
     app.loadMenu("#navHeader", "menu/menu.html", function() {
         // inspect the newly loaded menu to make it active
         var el = $("#nav_header");
@@ -180,6 +224,16 @@ $(document).ready(function () {
             var args = $(this).data("args")
             app.action(action, args);
         }
+    });
+    
+    // form modal watcher
+    $("#modalForm").submit(function (event) {
+        event.preventDefault();
+        var formData = new FormData(event.target);
+        var formDataJson = app.formDataToJSON(formData);
+        $("#formModal").modal('hide');
+        app.handleForm(formDataJson); 
+        //TODO: handle errors that might occur in the api query
     });
     
     app.mainDiv.show();
