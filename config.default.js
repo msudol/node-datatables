@@ -8,14 +8,14 @@ var Config = {
     
     // Webserver configuration
     webServer: {
+        serverUrl: "localhost",
         port: 3000,
         session: {
-            sharedSecretKey: 'simplesecret'
+            sharedSecretKey: "simplesecret"
         }
     }
     
-    
-    
+  
 };
 
 module.exports = Config;

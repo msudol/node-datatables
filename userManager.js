@@ -8,7 +8,6 @@
 "use strict";
 
 var _crypto = require('crypto');
-//var defaultKey = '3zTvzr3p67VC61jmV54rIYu1545x4TlY';
 
 class UserManager {
     
@@ -156,13 +155,9 @@ class UserManager {
     
     // allowed tables returns access allowed for a given user based on the rootTable
     // should return an object containing query: true, insert: true, update: true, remove: true
-    //allowedTables(userName, targetTable, callback) {
     allowedTables(userName, callback) {
         var self = this;
-        
-        // we don't care about target table at this moment.
-        //var targetTable = targetTable;
-        
+
         self.userDb.find(self.tableName, {userName: userName}, function(err, docs) {
             if (err) {
                 console.log("- Error finding docs");
@@ -195,7 +190,14 @@ class UserManager {
         });         
     }
     
-    // need a fast way to query if a user has a specific level of access for a specific table
+    /**
+     * @function Query if a user has a specific level of access for a specific table
+     * @param   {string} userName  A user name
+     * @param   {string} tableName A table name
+     * @param   {string} perm      A permission
+     * @param   {function} callback  Callback function expects (err, bool)
+     * @returns {function} Return the callback function
+     */  
     hasPermission(userName, tableName, perm, callback) {
         var self = this;
         var tableName = tableName;

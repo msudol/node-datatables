@@ -13,7 +13,7 @@ var fs = require('fs');
 class TableManager {
     
     /**
-     * Constructor
+     * @constructor A new instance of TableManager
      * @param   {string} rootName name of root the table
      * @param   {object} tables   object containing tables to initialize, set to false to initialize from the filesystem
      * @param   {string} path     path of the table
@@ -31,7 +31,11 @@ class TableManager {
         return this; 
     }
     
-    // function to init the table manager
+    /**
+     * @function Initialize the table manager
+     * @param {function} callback Callback function
+     * @param {boolean}  logging  Set logging state
+     */
     init(callback, logging) {
         var self = this;
         var callback = callback;
