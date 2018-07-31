@@ -1,6 +1,6 @@
 {
   "name": "node-datatables",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A project framework to build, edit, and view datatables",
   "main": "app.js",
   "repository": "https://github.com/msudol/node-datatables.git",

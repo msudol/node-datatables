@@ -1,5 +1,8 @@
+/* app.js */
+
 var App = function () {
-   this.host = "http://localhost:3000";
+    // get the configuration data for this app
+    this.host = window.location.origin;
 };
 
 // useful conversion function

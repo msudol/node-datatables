@@ -1,35 +1,36 @@
 # node-datatables
 
-A node.js web baser server and client system that will be able to manage, create, edit, and delete datatables and manage the data within them.
+This project is a node.js server and client system that will can manage, create, edit, and delete datatables backed by an NEDB JSON Store.
 
-## Data storage
+## Introduction
 
-In development, working with NEDB at first and then eventually MongoDB.
+There are 4 key components to this application. Data storage, web server, API, and client.
 
-## Web server 
+### Data storage
 
-Web server running on Express. For persistence consider using PM2 or another node daemon or process monitor.
+The data storage component is designed to work with NEDB, which should eventually be interchangeable with MongoDB.
 
-## Concepts & Design
+### Web server 
 
-The basic concept is the server will have 3 parts. A table manager, an API, and a front-end client.
-
-### Table Manager
-
-The table manager is a class that is invoked to manage the root tables, subtables, and table data, extending the function calls of NEDB / Mongo.
+Web server running on ExpressJS. For persistence consider using PM2 or another node daemon or process monitor.
 
 ### API
 
-The API will be able to call on required Table Manager functions in order to manipulate tables.
+The API will be able to call on required Table Manager functions in order to manipulate tables. It passes through validation and permission checks such that user permissions are enforced on attempted actions.
 
 ### Client
 
-The client will be a graphical front, that will leverage the API in order to manage and use tables.
+The client will is a web based graphical front-end, that leverages the API in order to manage and use tables, using JQuery Datatables library.
 
-## Installing & Running
+## Installation
 
 ```
 npm install
 node app <runtests>
 ```
+
+## Configuration
+
+Copy the config.default.js file to config.js and edit as necessary.
+
 
