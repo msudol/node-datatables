@@ -140,13 +140,34 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                         },
                         text: 'Add Row'
                     }); 
-
+                    
                     self.activeTable.button().add(1, {
+                        action: function (e, dt, button, config) {
+                            var tableRow = dt.row( { selected: true } ).data();
+                            console.log(tableRow._id);
+                            var rowid = tableRow._id;
+                            $("#formModal").modal('show');
+                            var htmlData = '<input type="hidden" id="formAction" name="formAction" value="editRow">';
+                            htmlData += '<input type="hidden" id="rowid" name="rowid" value="' + rowid + '">';
+                            for (var i in columnNames) {
+                                if (columnNames[i] != "_id") {
+                                    htmlData += `<div class="form-group"> 
+                                                    <label for="form_${columnNames[i]}">${columnNames[i]}</label>
+                                                    <input type="text" class="form-control" id="${columnNames[i]}" name="${columnNames[i]}" value="${tableRow[columnNames[i]]}" required>
+                                                </div>`;
+                                }
+                            }
+                            $("#action-modal-body").html(htmlData);
+                        },
+                        text: 'Edit Row'
+                    });                     
+
+                    self.activeTable.button().add(2, {
                         extend: 'selectedSingle',
                         text: 'Delete',
                         action: function ( e, dt, button, config ) {
                             var tableRow = dt.row( { selected: true } ).data();
-                            //console.log(tableRow._id); 
+                            console.log(tableRow._id); 
                             
                             $.get(self.host + "/api/remove/" + tableName + "/query/%7B%22_id%22:%22" + tableRow._id + "%22%7D", function (data) {
                                 self.activeTable.ajax.reload(function () { 
@@ -198,12 +219,17 @@ App.prototype.defineDivs = function (main, tables) {
     this.tableDiv = $(tables);
 };
 
-// handle form submission
+// handle form submission - with data 
 App.prototype.handleForm = function (data) {
     var self = this;
     var action = data.formAction;
+    // exists for query
+    var rowid = data.rowid;
     console.log("Handling form submission");
+    console.log("Row ID: " + rowid);
+    // what am i doing here? cleaning up the object?
     delete data.formAction;
+    delete data.rowid;
     var htmlData = JSON.stringify(data);
     switch (action) {
         case "addRow":
@@ -214,6 +240,14 @@ App.prototype.handleForm = function (data) {
                 });
             });   
             break;
+        case "editRow":
+            console.log(encodeURIComponent(htmlData));
+            $.get(self.host + "/api/update/" + self.currentTableName + "/query/%7B%22_id%22:%22" + rowid + "%22%7D" + "/update/" +  encodeURIComponent(htmlData) + "/opts/%7B%22multi%22%3A%22false%22%2C%22upsert%22%3A%22false%22%7D", function (data) {
+                self.activeTable.ajax.reload(function () { 
+                    //console.log("Refreshing table");
+                });
+            });   
+            break;            
         default: 
             console.log("No form action");
     }
