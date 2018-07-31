@@ -63,6 +63,26 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                     data: data.data,
                     columns: columns,
                     dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },
+                        {
+                            extend: 'csvHtml5',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },                        
+                        {
+                            extend: 'pdfHtml5',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },                        
+                    ],
                     "language": {
                       "emptyTable": "No data available in table"
                     },              
