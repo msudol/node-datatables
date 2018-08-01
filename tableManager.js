@@ -71,7 +71,7 @@ class TableManager {
                 if (err) {
                     console.error(err);
                 } 
-                if (docs.length == 0) {
+                if (docs.length === 0) {
                     if (self.logging) console.log(self.path + '/' + self.rootName + " done initializing, running callback");
                     return callback();                           
                 } else {
@@ -92,7 +92,7 @@ class TableManager {
         // tables were sent as a javascript object
         else {
             if (self.logging) console.log("Inspecting Subtables from default tables.");
-            if (self.tables.length == 0) {
+            if (self.tables.length === 0) {
                 if (self.logging) console.log(self.path + '/' + self.rootName + " done initializing, running callback");
                 return callback();                           
             } else {       
@@ -115,7 +115,7 @@ class TableManager {
     /**
      * Create a sub table 
      * @param   {string} tableName - A unique table name
-     * @param   {object}   tableObj - The table object to create, expects {name: str, fields: array, unique: array, group: object}
+     * @param   {object}   tableObj - The table object to create, expects {name: str, fields: array, unique: array, group: object, settings: object}
      * @param   {function} callback - Callback Function
      * @returns {function} - Callback Function
      */
@@ -124,8 +124,8 @@ class TableManager {
         var tableName = tableName;
         var callback = callback;
         
-        // inspect the tableObj and deny it, if it false the required data
-        if ((!tableObj.name) || (!tableObj.fields) || (!tableObj.unique) || (!tableObj.group)) {
+        // inspect the tableObj and deny it, if it fails the required data
+        if ((!tableObj.name) || (!tableObj.desc) || (!tableObj.fields) || (!tableObj.unique) || (!tableObj.group) || (!tableObj.settings)) {
             console.log("Cannot create subtable without required fields.");
             return;
         }
@@ -156,7 +156,7 @@ class TableManager {
             }
             
             // no doc reference in the root database was found - need to create the table for tracking
-            if (docs.length == 0) {
+            if (docs.length === 0) {
                 self.db[self.rootName].insert(tableObj, function (err, newDoc) {   
                     // init the datastore for this table.name into the root tracking if exists OR create it
                     if (err) {

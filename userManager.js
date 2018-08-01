@@ -166,13 +166,14 @@ class UserManager {
                 if (docs[0]) {
                     //get this users group membersip from docs[0]
                     var groups = docs[0].group;
-                    var settings = docs[0].settings;
+                    var settings = docs[0].settings; // TODO
                     // http://localhost:3000/api/find/root/query/{"$or":[{"group.users.query":true},{"group.admins.query":true}]}
                     var query = [];
 
                     // query access for the groups the user is in
                     for (var i = 0; i < groups.length; i++) { 
-                        var str = '{"group.'+groups[i]+'.query":true}';
+                        // root db uses settings for group membership
+                        var str = '{"settings.'+groups[i]+'.query":true}';
                         query.push(JSON.parse(str));
                     }
 
@@ -210,7 +211,7 @@ class UserManager {
                 if (docs[0]) {
                     //get this users group membersip from docs[0]
                     var groups = docs[0].group;
-                    var settings = docs[0].settings;
+                    var settings = docs[0].settings;   //TODO
 
                     // do the query on specific table in the root table 
                     self.db.find(self.db.rootName, {name: tableName}, function(err, docs) {
@@ -220,7 +221,8 @@ class UserManager {
                             if (docs[0]) {
                                 var hasPerm = false;
                                 for (var i = 0; i < groups.length; i++) { 
-                                    if ((docs[0].group[groups[i]]) && (docs[0].group[groups[i]][perm])) {   
+                                    // root db uses settings
+                                    if ((docs[0].settings[groups[i]]) && (docs[0].settings[groups[i]][perm])) {   
                                         hasPerm = true;
                                         console.log(groups[i] + " permission: " + perm + " is: true");
                                     } else {
@@ -239,8 +241,7 @@ class UserManager {
             }
         });  
     }
-    
- 
+
 }
 
 module.exports = UserManager;

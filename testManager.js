@@ -78,6 +78,7 @@ class TestManager {
     
     // test creating a new subtable test 1
     testNewSubTable1(self) {
+        // user groups - not really working yet
         var group = {};
         group.users = {
             query: true, 
@@ -94,9 +95,15 @@ class TestManager {
             remove: true,
             create: true,
             drop: true,
-        };        
+        };  
+        // table field settings - not working yet
+        var settings = {};
+        settings.fieldType = {
+            // setting val field to be "int" - for later on when the fields get checked for accuracy
+            val: "int"
+        };
         
-        var testTable = {name: 'test1', desc: 'Just a test', fields: ['key', 'val', 'etc'], unique: ['key'], group: group};
+        var testTable = {name: 'test1', desc: 'Just a test', fields: ['key', 'val', 'etc'], unique: ['key'], group: group, settings: settings};
         console.log(" - Test creating table 1");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
@@ -154,8 +161,14 @@ class TestManager {
             remove: true,
             create: true,
             drop: true,
-        };        
-        var testTable = {name: 'test2', desc: 'Another test table', fields: ['key', 'val', 'etc'], unique: ['key'], group: group};
+        };     
+        // table field settings - not working yet
+        var settings = {};
+        settings.fieldType = {
+            // setting val field to be "int" - for later on when the fields get checked for accuracy
+            val: "int"
+        };
+        var testTable = {name: 'test2', desc: 'Another test table', fields: ['key', 'val', 'etc'], unique: ['key'], group: group, settings: settings};
         console.log(" - Test creating table test 2");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
@@ -176,7 +189,13 @@ class TestManager {
             create: true,
             drop: true,
         };
-        var testTable = {name: 'adminOnly', desc: 'An admin only table', fields: ['key', 'val', 'etc'], unique: ['key'], group: group};
+        // table field settings - not working yet
+        var settings = {};
+        settings.fieldType = {
+            // setting val field to be "int" - for later on when the fields get checked for accuracy
+            val: "int"
+        };        
+        var testTable = {name: 'adminOnly', desc: 'An admin only table', fields: ['key', 'val', 'etc'], unique: ['key'], group: group, settings: settings};
         console.log(" - Test creating table test 3");
         // test creating a new subtable
         self.db.subTable(testTable.name, testTable, function () {
@@ -250,7 +269,22 @@ class TestManager {
     // test creating the users sub table.
     testNewUserSubTable(self) {
         console.log(" - Test create new user table");
-        var testTable = {name: 'users', fields: ["userName","firstName","lastName","password","email","group","salt"], unique: ["userName"], group: ['admins']};
+        var group = {};
+        group.admins = {
+            query: true, 
+            insert: true,
+            update: true,
+            remove: true,
+            create: true,
+            drop: true,
+        };
+        // table field settings - not working yet
+        var settings = {};
+        settings.fieldType = {
+            // setting val field to be "int" - for later on when the fields get checked for accuracy
+            val: "int"
+        };         
+        var testTable = {name: 'users', desc: 'user', fields: ["userName","firstName","lastName","password","email","group","salt"], unique: ["userName"], group: group, settings: settings};
         // test creating a new subtable
         self.userDb.subTable(testTable.name, testTable, function () {
             console.log(" - Created new users subtable");

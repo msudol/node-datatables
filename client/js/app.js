@@ -59,6 +59,10 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                         isVis = false;
                         isSearch = false;
                     }
+                    if (columnNames[i] == "group") {
+                        isVis = false;
+                        isSearch = false;
+                    }                    
                     columns.push({data: columnNames[i], title: columnNames[i], visible: isVis, searchable: isSearch, defaultContent: "<i>Not set</i>"});
                 }
                 // init table
