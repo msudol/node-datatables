@@ -101,19 +101,19 @@ class UserManager {
     }   
     
     // TODO
-    // edit a user given username and the and opts object with what is being edited
-    updateUser(userName, opts, callback) {
+    // edit a user given username and the and data object with what is being edited
+    updateUser(userName, data, callback) {
         var self = this;
-        //opts can be {firstName, lastName, password, email, group, settings}
+        //data can be {firstName, lastName, password, email, group, settings}
         
         // if pwd is set, encrypt and resave
-        if ((opts.password !== undefined) && (opts.password !== null)) {
+        if ((data.password !== undefined) && (data.password !== null)) {
             var enc = this.encrypt(password, self.masterKey);
-            opts.password = enc;
+            data.password = enc;
         }
         
         // tablename, the user, the data to update, empty object passed to db.update for options default, then callback func
-        self.userDb.update(self.tableName, {userName: userName}, {$set: opts}, {}, function(err, numReplaced) {
+        self.userDb.update(self.tableName, {userName: userName}, data, {}, function(err, numReplaced) {
             return callback(err, numReplaced);
         });
     }

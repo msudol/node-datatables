@@ -3,6 +3,7 @@
 var App = function () {
     // get the configuration data for this app
     this.host = window.location.origin;
+    this.fieldsToHide = ["_id", "_created", "_modified", "group", "settings"];
 };
 
 // useful conversion function
@@ -54,9 +55,8 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                 for (var i in columnNames) {
                     var isVis = true;
                     var isSearch = true;
-                    var fieldsToHide = ["_id", "group", "settings"]
                     // hide the _id field and others
-                    if (fieldsToHide.includes(columnNames[i])) {
+                    if (app.fieldsToHide.includes(columnNames[i])) {
                         isVis = false;
                         isSearch = false;
                     }                    
@@ -133,7 +133,7 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                             $("#formModal").modal('show');
                             var htmlData = '<input type="hidden" id="formAction" name="formAction" value="addRow">';
                             for (var i in columnNames) {
-                                if (columnNames[i] != "_id") {
+                                if (!app.fieldsToHide.includes(columnNames[i])) {
                                     htmlData += `<div class="form-group"> 
                                                     <label for="form_${columnNames[i]}">${columnNames[i]}</label>
                                                     <input type="text" class="form-control" id="${columnNames[i]}" name="${columnNames[i]}" placeholder="Enter Data" required>
@@ -154,7 +154,7 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                             var htmlData = '<input type="hidden" id="formAction" name="formAction" value="editRow">';
                             htmlData += '<input type="hidden" id="rowid" name="rowid" value="' + rowid + '">';
                             for (var i in columnNames) {
-                                if (columnNames[i] != "_id") {
+                                if (!app.fieldsToHide.includes(columnNames[i])) {
                                     htmlData += `<div class="form-group"> 
                                                     <label for="form_${columnNames[i]}">${columnNames[i]}</label>
                                                     <input type="text" class="form-control" id="${columnNames[i]}" name="${columnNames[i]}" value="${tableRow[columnNames[i]]}" required>
@@ -279,7 +279,7 @@ $(document).ready(function () {
         } else {
             //console.log($(this).data("action"));
             var action = $(this).data("action");
-            var args = $(this).data("args")
+            var args = $(this).data("args");
             app.action(action, args);
         }
     });

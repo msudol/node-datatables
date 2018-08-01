@@ -235,6 +235,9 @@ class TableManager {
         var data = data;
         var callback = callback;
         
+        data._created = Date.now();
+        data._modified = Date.now();
+        
         if (this.db[tableName] === undefined) {
             return callback("Table doesn't exist!", []);
         }
@@ -258,11 +261,13 @@ class TableManager {
         var data = data;
         var callback = callback;
         
+        data._modified = Date.now();
+        
         if (this.db[tableName] === undefined) {
             return callback("Table doesn't exist!", 0);
         }
         
-        this.db[tableName].update(query, data, options, function(err, numReplaced) {
+        this.db[tableName].update(query, {$set: data}, options, function(err, numReplaced) {
 
             if (err) {
                if (err.errorType == "uniqueViolated") {
