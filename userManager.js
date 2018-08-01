@@ -172,8 +172,8 @@ class UserManager {
 
                     // query access for the groups the user is in
                     for (var i = 0; i < groups.length; i++) { 
-                        // root db uses settings for group membership
-                        var str = '{"settings.'+groups[i]+'.query":true}';
+                        // root db uses group object for group membership
+                        var str = '{"group.'+groups[i]+'.query":true}';
                         query.push(JSON.parse(str));
                     }
 
@@ -221,8 +221,8 @@ class UserManager {
                             if (docs[0]) {
                                 var hasPerm = false;
                                 for (var i = 0; i < groups.length; i++) { 
-                                    // root db uses settings
-                                    if ((docs[0].settings[groups[i]]) && (docs[0].settings[groups[i]][perm])) {   
+                                    // root db uses group
+                                    if ((docs[0].group[groups[i]]) && (docs[0].group[groups[i]][perm])) {   
                                         hasPerm = true;
                                         console.log(groups[i] + " permission: " + perm + " is: true");
                                     } else {

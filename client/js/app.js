@@ -54,12 +54,9 @@ App.prototype.loadTable = function (selector, tableName, tableDesc) {
                 for (var i in columnNames) {
                     var isVis = true;
                     var isSearch = true;
-                    // hide the _id field
-                    if (columnNames[i] == "_id") {
-                        isVis = false;
-                        isSearch = false;
-                    }
-                    if (columnNames[i] == "group") {
+                    var fieldsToHide = ["_id", "group", "settings"]
+                    // hide the _id field and others
+                    if (fieldsToHide.includes(columnNames[i])) {
                         isVis = false;
                         isSearch = false;
                     }                    
