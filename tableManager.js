@@ -3,11 +3,13 @@
 * Class will manage tables / documents
 * 
 * Initially this is built for nedb but should eventually support mongo too
+* replacing NEBD with an updated fork
+*
 */
 "use strict";
 
 // require nedb or mongo
-var Datastore = require('nedb');
+var Datastore = require('@seald-io/nedb');
 var fs = require('fs');
 
 class TableManager {
